@@ -3,8 +3,11 @@ package urlshortener.repository.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import urlshortener.domain.Click;
 import urlshortener.domain.SystemInfo;
 import urlshortener.repository.SystemInfoRepository;
+
 
 public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     private static final Logger log = LoggerFactory
