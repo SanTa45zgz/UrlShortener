@@ -24,6 +24,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.maxmind.geoip2/geoip2
     compile group: 'com.maxmind.geoip2', name: 'geoip2', version: '2.3.1'
 
+    compile group: 'org.jvnet.sorcerer', name: 'sorcerer-javac', version: '0.8'
 
 
     implementation 'commons-validator:commons-validator:1.6'
