@@ -70,8 +70,6 @@ public class SystemInfoTests {
 
         assertEquals((int)finalInfo.read("$.numUris"),
                 (int)initialInfo.read("$.numUris") + 1);
-
-
     }
 
     private ResponseEntity<String> postLink(String url) {

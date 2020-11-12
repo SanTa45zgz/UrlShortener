@@ -1,5 +1,7 @@
 package urlshortener.domain;
 
+import com.sun.tools.javac.util.Pair;
+
 import java.net.URI;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public class SystemInfo {
     private Long numUsers;
     private Long numClicks;
     private Long numUris;
-    private List<URI> topUris;
+    private List<Pair<String,Long>> topUris;
     private GeoLocation location;
 
     public SystemInfo(Long numUsers, Long numClicks, Long numUris) {
@@ -17,7 +19,7 @@ public class SystemInfo {
     }
 
 
-    public SystemInfo(Long numUsers, Long numClicks, Long numUris, List<URI> topUris, GeoLocation location) {
+    public SystemInfo(Long numUsers, Long numClicks, Long numUris, List<Pair<String,Long>> topUris, GeoLocation location) {
         this.numUsers = numUsers;
         this.numClicks = numClicks;
         this.numUris = numUris;
@@ -25,7 +27,7 @@ public class SystemInfo {
         this.location = location;
     }
 
-    public SystemInfo(Long numUsers, Long numClicks, Long numUris, List<URI> topUris) {
+    public SystemInfo(Long numUsers, Long numClicks, Long numUris, List<Pair<String,Long>> topUris) {
         this.numUsers = numUsers;
         this.numClicks = numClicks;
         this.numUris = numUris;
@@ -44,7 +46,7 @@ public class SystemInfo {
         return numUris;
     }
 
-    public List<URI> getTopUris() {
+    public List<Pair<String,Long>> getTopUris() {
         return topUris;
     }
 
