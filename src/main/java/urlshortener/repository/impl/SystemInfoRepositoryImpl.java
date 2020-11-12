@@ -2,14 +2,19 @@ package urlshortener.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.web.client.RestTemplate;
 import urlshortener.domain.Click;
+import urlshortener.domain.GeoLocation;
 import urlshortener.domain.SystemInfo;
 import urlshortener.repository.SystemInfoRepository;
 
 
 public class SystemInfoRepositoryImpl implements SystemInfoRepository {
+
+
     private static final Logger log = LoggerFactory
             .getLogger(SystemInfoRepositoryImpl.class);
 
@@ -20,7 +25,7 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     }
 
     @Override
-    public SystemInfo getSystemInfo() {
+    public SystemInfo getSystemInfo(GeoLocation location) {
         long numUsers = 0;
         long numClicks = 0;
         long numUris = 0;
@@ -33,6 +38,6 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
         }catch (Exception e){
             log.debug("When select ", e);
         }
-        return new SystemInfo(numUsers, numClicks, numUris);
+        return new SystemInfo(numUsers, numClicks, numUris,null,location);
     }
 }

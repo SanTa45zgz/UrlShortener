@@ -37,8 +37,8 @@ public class SystemInfoRepositoryTests {
 
     @Test
     public void thatGetInfoReturnsCorrectInfo(){
-        SystemInfo systemInfo = repository.getSystemInfo();
-        assertNotNull(repository.getSystemInfo());
+        SystemInfo systemInfo = repository.getSystemInfo(null);
+        assertNotNull(repository.getSystemInfo(null));
         assertSame(jdbc.queryForObject("select count(*) from click", Long.class),
                 systemInfo.getNumClicks());
 
