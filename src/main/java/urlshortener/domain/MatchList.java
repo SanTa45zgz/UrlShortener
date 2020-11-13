@@ -7,7 +7,8 @@ public class MatchList implements Serializable {
 
     private List<Match> matches;
 
-    public MatchList() {}
+    public MatchList() {
+    }
 
     public List<Match> getMatches() {
         return matches;

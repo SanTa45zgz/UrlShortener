@@ -1,23 +1,24 @@
 package urlshortener.repository;
 
-import java.util.List;
 import urlshortener.domain.Click;
+
+import java.util.List;
 
 public interface ClickRepository {
 
-  List<Click> findByHash(String hash);
+    List<Click> findByHash(String hash);
 
-  Long clicksByHash(String hash);
+    Long clicksByHash(String hash);
 
-  Click save(Click cl);
+    Click save(Click cl);
 
-  void update(Click cl);
+    void update(Click cl);
 
-  void delete(Long id);
+    void delete(Long id);
 
-  void deleteAll();
+    void deleteAll();
 
-  Long count();
+    Long count();
 
-  List<Click> list(Long limit, Long offset);
+    List<Click> list(Long limit, Long offset);
 }
