@@ -34,6 +34,7 @@ public class ShortURLService {
         .ip(ip)
         .unknownCountry()
         .build();
+        System.out.println("OK");
     return shortURLRepository.save(su);
   }
 }

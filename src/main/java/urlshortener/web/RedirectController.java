@@ -38,6 +38,7 @@ public class RedirectController {
         }
         else{
             if (l != null) {
+                System.out.println("ENTRAMOS");
                 clickService.saveClick(id, extractIP(request));
                 return createSuccessfulRedirectToResponse(l);
                 //return "redirect:"+l.getTarget(); // devuelve un 302 con un Location: http://some.page.web/
@@ -53,14 +54,14 @@ public class RedirectController {
     }
 
     @PostMapping(value = "/redirect")
-    public String toLink(@RequestParam("url") String url,
+    public ResponseEntity<String> toLink(@RequestParam("url") String url,
                                             HttpServletRequest request) {
         System.out.println("Redireccionamos tras publi");
         String[] urlAux = url.split("/");
         String id = urlAux[urlAux.length-1];
         ShortURL l = shortUrlService.findByKey(id);
         clickService.saveClick(id, extractIP(request));
-        return "redirect:"+l.getTarget();
+        return new ResponseEntity<String>(l.getTarget(),HttpStatus.OK);
     }
 
     private String extractIP(HttpServletRequest request) {

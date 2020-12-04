@@ -5,8 +5,11 @@ $(document).ready(
                 event.preventDefault();
                 $.ajax({
                     type: "POST",
-                    url: "/redirect",
-                    data: $(this).serialize()
+                    url: "/redirect", // devuelve la URI buena
+                    data: $(this).serialize(),
+                    success: function(data) {
+                        window.open(data, "_self")
+                    }
                 });
             });
     });

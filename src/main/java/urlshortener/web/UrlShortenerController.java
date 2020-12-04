@@ -29,11 +29,13 @@ public class UrlShortenerController {
     UrlValidator urlValidator = new UrlValidator(new String[] {"http",
         "https"});
     if (urlValidator.isValid(url)) {
+      System.out.println("URL VALID");
       ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
       HttpHeaders h = new HttpHeaders();
       h.setLocation(su.getUri());
       return new ResponseEntity<>(su, h, HttpStatus.CREATED);
     } else {
+      System.out.println("URL NOT VALID");
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
   }
