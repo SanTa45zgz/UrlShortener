@@ -5,12 +5,14 @@ public class GeoLocation {
     private String city;
     private String latitude;
     private String longitude;
+    private String country;
 
-    public GeoLocation(String ipAddress, String city, String latitude, String longitude) {
+    public GeoLocation(String ipAddress, String city, String latitude, String longitude, String country) {
         this.ipAddress = ipAddress;
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.country = country;
     }
 
     public String getIpAddress() {
@@ -23,6 +25,14 @@ public class GeoLocation {
 
     public String getCity() {
         return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public void setCity(String city) {

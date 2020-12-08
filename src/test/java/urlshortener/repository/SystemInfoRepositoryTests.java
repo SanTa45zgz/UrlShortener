@@ -1,11 +1,11 @@
 package urlshortener.repository;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import urlshortener.domain.SystemInfo;
 import urlshortener.fixtures.ShortURLFixture;
 
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,6 @@ import urlshortener.repository.impl.ShortURLRepositoryImpl;
 import urlshortener.repository.impl.SystemInfoRepositoryImpl;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
-import static urlshortener.fixtures.ShortURLFixture.urlSponsor;
 
 public class SystemInfoRepositoryTests {
     private EmbeddedDatabase db;
@@ -35,12 +34,4 @@ public class SystemInfoRepositoryTests {
         repository = new SystemInfoRepositoryImpl(jdbc);
     }
 
-    @Test
-    public void thatGetInfoReturnsCorrectInfo(){
-        SystemInfo systemInfo = repository.getSystemInfo(null);
-        assertNotNull(repository.getSystemInfo(null));
-        assertSame(jdbc.queryForObject("select count(*) from click", Long.class),
-                systemInfo.getNumClicks());
-
-    }
 }

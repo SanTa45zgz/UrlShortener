@@ -1,7 +1,10 @@
 package urlshortener.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.Click;
 import urlshortener.repository.ClickRepository;

@@ -31,7 +31,8 @@ public class GeoLocationService {
                 response.getLocation().getLatitude().toString();
         String longitude =
                 response.getLocation().getLongitude().toString();
-        return new GeoLocation(ip, cityName, latitude, longitude);
+        String country = response.getCountry().getName();
+        return new GeoLocation(ip, cityName, latitude, longitude, country);
     }
 
 }

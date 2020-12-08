@@ -19,5 +19,7 @@ public interface ClickRepository {
 
   Long count();
 
+  Long countByIp();
+
   List<Click> list(Long limit, Long offset);
 }

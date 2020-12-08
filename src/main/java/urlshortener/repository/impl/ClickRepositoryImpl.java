@@ -128,6 +128,17 @@ public class ClickRepositoryImpl implements ClickRepository {
   }
 
   @Override
+  public Long countByIp() {
+    try{
+      return jdbc.queryForObject("select count(*) from " +
+              "(select ip from click group by ip)", Long.class);
+    }catch (Exception e) {
+      log.debug("When counting", e);
+    }
+    return -1L;
+  }
+
+  @Override
   public List<Click> list(Long limit, Long offset) {
     try {
       return jdbc.query("SELECT * FROM click LIMIT ? OFFSET ?",
