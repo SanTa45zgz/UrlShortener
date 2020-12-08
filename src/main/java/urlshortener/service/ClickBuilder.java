@@ -2,6 +2,7 @@ package urlshortener.service;
 
 import java.sql.Date;
 import urlshortener.domain.Click;
+import urlshortener.domain.GeoLocation;
 
 public class ClickBuilder {
 
@@ -53,8 +54,8 @@ public class ClickBuilder {
     return this;
   }
 
-  ClickBuilder withoutCountry() {
-    this.country = null;
+  ClickBuilder withCountry(GeoLocation location) {
+    this.country = location.getCountry();
     return this;
   }
 

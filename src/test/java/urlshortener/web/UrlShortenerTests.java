@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
+import urlshortener.service.GeoLocationService;
 import urlshortener.service.ShortURLService;
 
 public class UrlShortenerTests {
@@ -35,6 +36,9 @@ public class UrlShortenerTests {
 
   @Mock
   private ShortURLService shortUrlService;
+
+  @Mock
+  private GeoLocationService geoLocationService;
 
   @InjectMocks
   private UrlShortenerController urlShortener;

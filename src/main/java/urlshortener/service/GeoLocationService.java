@@ -15,7 +15,7 @@ import java.net.InetAddress;
 // https://www.baeldung.com/geolocation-by-ip-with-maxmind
 @Service
 public class GeoLocationService {
-    private DatabaseReader dbReader;
+    private final DatabaseReader dbReader;
 
     public GeoLocationService() throws IOException {
         File database = new File("src/main/resources/GeoLite2-City.mmdb");

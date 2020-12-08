@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class UrlShortenerController {
   {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
-    this.geoLocationService = geoLocationService; }
+    this.geoLocationService = geoLocationService;
+  }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
   public ResponseEntity<?> redirectTo(@PathVariable String id,
@@ -48,12 +50,8 @@ public class UrlShortenerController {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       try {
-        clickService.saveClick(id, extractIP(request));
         GeoLocation loc = geoLocationService.getLocation(extractIP(request));
-
-        // Increases geo_redirects counter
-        Metrics.counter("geo_redirects","country", loc.getCountry()).increment();
-
+        clickService.saveClick(id, extractIP(request), loc);
       } catch (IOException | GeoIp2Exception e) {
         e.printStackTrace();
       }
