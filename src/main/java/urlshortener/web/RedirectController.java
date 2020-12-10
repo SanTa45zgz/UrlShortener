@@ -3,6 +3,7 @@ package urlshortener.web;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
@@ -49,10 +50,13 @@ public class RedirectController {
         }
     }
 
-    @Cacheable(cacheNames="ad")
+    //@Cacheable(cacheNames="ad")
     @GetMapping("/ad/{.*}")
-    public String redirectToAd() {
+    public String redirectToAd(HttpServletResponse response) {
         System.out.println("CARGA PAGINA INTERSTICIAL");
+        //https://www.baeldung.com/spring-response-header
+        //https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control
+        response.setHeader("Cache-Control", "public, max-age=604800, immutable");
         return "ad";
     }
 
@@ -71,9 +75,14 @@ public class RedirectController {
         return request.getRemoteAddr();
     }
 
+    @Cacheable(cacheNames="ad")
     private ResponseEntity<?> createSuccessfulRedirectToResponse(String id) {
+        System.out.println("REDIRECCION A PAGINA INTERSTICIAL");
         HttpHeaders h = new HttpHeaders();
-        h.add("Location", "ad/"+id);  
+        h.add("Location", "ad/"+id);
+        //https://www.baeldung.com/spring-response-header
+        //https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control
+        h.set("Cache-Control", "public, max-age=604800, immutable");
         return new ResponseEntity<>(h, HttpStatus.FOUND);
     }
 
