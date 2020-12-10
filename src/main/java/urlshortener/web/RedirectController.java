@@ -4,6 +4,7 @@ import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +49,10 @@ public class RedirectController {
         }
     }
 
+    @Cacheable(cacheNames="ad")
     @GetMapping("/ad/{.*}")
     public String redirectToAd() {
+        System.out.println("CARGA PAGINA INTERSTICIAL");
         return "ad";
     }
 
