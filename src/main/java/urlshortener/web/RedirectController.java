@@ -44,7 +44,7 @@ public class RedirectController {
                 return createSuccessfulRedirectToResponse(l);
                 //return "redirect:"+l.getTarget(); // devuelve un 302 con un Location: http://some.page.web/
             } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
     }
