@@ -12,12 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
-import urlshortener.domain.ShortURL;
 
 
 @Controller
@@ -50,7 +49,7 @@ public class RedirectController {
         }
     }
 
-    //@Cacheable(cacheNames="ad")
+    @Cacheable(cacheNames="ad")
     @GetMapping("/ad/{.*}")
     public String redirectToAd(HttpServletResponse response) {
         System.out.println("CARGA PAGINA INTERSTICIAL");
@@ -73,7 +72,7 @@ public class RedirectController {
         return request.getRemoteAddr();
     }
 
-    @Cacheable(cacheNames="ad")
+    @Cacheable(cacheNames="toAd")
     private ResponseEntity<?> createSuccessfulRedirectToResponse(String id) {
         System.out.println("REDIRECCION A PAGINA INTERSTICIAL");
         HttpHeaders h = new HttpHeaders();
