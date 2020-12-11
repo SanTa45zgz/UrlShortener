@@ -60,12 +60,10 @@ public class RedirectController {
         return "ad";
     }
 
-    @PostMapping(value = "/redirect")
-    public ResponseEntity<String> toLink(@RequestParam("url") String url,
+    @GetMapping(value = "/redirect/{hash}")
+    public ResponseEntity<String> toLink(@RequestParam("hash") String id,
                                             HttpServletRequest request) {
         System.out.println("Redireccionamos tras publi");
-        String[] urlAux = url.split("/");
-        String id = urlAux[urlAux.length-1];
         ShortURL l = shortUrlService.findByKey(id);
         clickService.saveClick(id, extractIP(request));
         return new ResponseEntity<String>(l.getTarget(),HttpStatus.OK);

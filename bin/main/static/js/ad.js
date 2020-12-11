@@ -4,8 +4,8 @@ $(document).ready(
             function (event) {
                 event.preventDefault();
                 $.ajax({
-                    type: "POST",
-                    url: "/redirect", // devuelve la URI buena
+                    type: "GET",
+                    url: "/redirect/{hash}", // una petición parametrizada que devuelve la URI buena
                     data: $(this).serialize(),
                     success: function(data) {
                         window.open(data, "_self")

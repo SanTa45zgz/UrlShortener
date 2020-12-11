@@ -23,7 +23,7 @@
                 </p>
               </section>
               <form action="" id="skip_ad">
-                <input id="url" name="url" type="hidden">
+                <input id="hash" name="hash" type="hidden">
                 <button id="saltar" type="submit" disabled>Saltar publicidad</button>
               </form>
               <br>
@@ -47,10 +47,10 @@
         // DOM for render
         const SPAN_SECONDS = document.querySelector('span#seconds');
         const BUTTON_SALTAR = document.getElementById('saltar');
-        const URL = document.getElementById('url');
+        const HASH = document.getElementById('hash');
         // Milliseconds for the calculations
         const MILLISECONDS_OF_A_SECOND = 1000;
-		    SPAN_SECONDS.textContent = 11;
+        SPAN_SECONDS.textContent = 11;
 
         //===
         // FUNCTIONS
@@ -65,7 +65,8 @@
             SPAN_SECONDS.textContent = SPAN_SECONDS.textContent -1;
           }
           else{
-            URL.value = location.href;
+            let urlAux = location.href.split("/");
+            HASH.value = urlAux[urlAux.length-1];
             BUTTON_SALTAR.disabled = false;
           }
         }
