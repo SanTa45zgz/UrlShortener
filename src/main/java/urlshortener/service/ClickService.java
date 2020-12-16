@@ -26,9 +26,7 @@ public class ClickService {
   public void saveClick(String hash, String ip, GeoLocation loc) {
     Click cl = ClickBuilder.newInstance().hash(hash).createdNow().ip(ip).withCountry(loc).build();
     cl = clickRepository.save(cl);
-    // Increase geo_redirect counter
-    Metrics.counter("geo_redirects", "country", loc.getCountry()).increment();
-    log.info(cl != null ? "[" + hash + "] saved with id [" + cl.getId() + "] and country ["
+        log.info(cl != null ? "[" + hash + "] saved with id [" + cl.getId() + "] and country ["
             + cl.getCountry() + "]":
         "[" + hash + "] was not saved");
   }

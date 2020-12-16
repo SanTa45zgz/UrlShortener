@@ -5,10 +5,13 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Collections;
 import java.util.List;
+
+import com.sun.tools.javac.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.dao.DuplicateKeyException;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,6 +32,11 @@ public class ClickRepositoryImpl implements ClickRepository {
           rs.getDate("created"), rs.getString("referrer"),
           rs.getString("browser"), rs.getString("platform"),
           rs.getString("ip"), rs.getString("country"));
+
+  private static final RowMapper<Pair<String, Long>> pairMapper =
+          (rs, rowNum) -> new Pair<String, Long>(
+                  rs.getString("country"), rs.getLong("cuenta")
+          );
 
   private final JdbcTemplate jdbc;
 
@@ -136,6 +144,17 @@ public class ClickRepositoryImpl implements ClickRepository {
       log.debug("When counting", e);
     }
     return -1L;
+  }
+
+  @Override
+  public List<Pair<String, Long>> countByCountry() {
+    try{
+      return jdbc.query("select country, count(*) as cuenta" +
+              " from click group by country order by count(*) desc", pairMapper);
+    }catch (Exception e) {
+      log.debug("When counting", e);
+    }
+    return null;
   }
 
   @Override

@@ -1,4 +1,4 @@
-package urlshortener.config;
+package urlshortener.service;
 
 import com.sun.tools.javac.util.Pair;
 import io.micrometer.core.instrument.Gauge;
@@ -35,38 +35,59 @@ public class PrometheusCounters {
         this.shortURLRepository = shortURLRepository;
         this.systemInfoRepository = systemInfoRepository;
     }
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void countNumClick(){
-        Gauge.builder("sysinfo_clicks_count", clickRepository::count)
+        Gauge.builder("sysinfo.clicks", clickRepository::count)
                 .description("Total amount of clicks")
                 .register(registry);
-        log.info("NumClicks calculados");
+        log.info("NumClicks calculated");
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void countNumUris(){
-        Gauge.builder("sysinfo_uris_count", shortURLRepository::count)
+        Gauge.builder("sysinfo.uris", shortURLRepository::count)
                 .description("Total amount of uris shortened")
                 .register(registry);
+        log.info("NumUris shortened calculated");
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void countNumUsers(){
-        Gauge.builder("sysinfo_users_count", clickRepository::countByIp)
+        Gauge.builder("sysinfo.users", clickRepository::countByIp)
                 .description("Total amount of users connected")
                 .register(registry);
+        log.info("NumUsers calculated");
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 1000)
     public void http_redirects(){
         List<Pair<String, Long>> topUris = getRankingUris();
         for (Pair<String, Long> item : topUris) {
-            registry.counter("http_redirects", "hash", item.fst, "value", item.snd.toString()).increment();
+            registry.counter("http.redirects",
+                    "hash", item.fst,
+                    "value", item.snd.toString())
+                    .increment();
         }
+        log.info("TopUris calculated");
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void geo_redirects(){
+        List<Pair<String, Long>> country_redirects = getCountryCount();
+        for (Pair<String, Long> item : country_redirects) {
+            registry.counter("geo.redirects",
+                    "country", item.fst,
+                    "value", item.snd.toString())
+                    .increment();
+        }
+        log.info("GeoRedirects calculated");
     }
 
     private List<Pair<String, Long>> getRankingUris(){
         return systemInfoRepository.getTopUris();
+    }
+    private List<Pair<String, Long>> getCountryCount(){
+        return clickRepository.countByCountry();
     }
 
 }

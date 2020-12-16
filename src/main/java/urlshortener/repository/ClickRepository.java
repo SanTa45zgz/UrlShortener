@@ -1,6 +1,8 @@
 package urlshortener.repository;
 
 import java.util.List;
+
+import com.sun.tools.javac.util.Pair;
 import urlshortener.domain.Click;
 
 public interface ClickRepository {
@@ -20,6 +22,8 @@ public interface ClickRepository {
   Long count();
 
   Long countByIp();
+
+  List<Pair<String, Long>> countByCountry();
 
   List<Click> list(Long limit, Long offset);
 }
