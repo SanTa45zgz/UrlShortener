@@ -4,6 +4,8 @@
 
 This is the start repository for the project developed in this course. 
 
+[Link to the PowerPoint Presentation](https://unizares-my.sharepoint.com/:p:/g/personal/756308_unizar_es/EV5cWhnonf1Dl1W1doLosQIBA4Gb5TLwxsC3JP4hYzDCqw?e=lXKWgJ)
+
 The __project__ is a [Spring Boot](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) application that offers a minimum set of functionalities shared by all subprojects.
 
 * __Short URL creation service__:  `POST /` creates a shortened URL from a URL in the request parameter `url`.
