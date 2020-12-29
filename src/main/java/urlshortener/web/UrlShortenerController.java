@@ -49,8 +49,7 @@ public class UrlShortenerController {
                                               @RequestParam(value = "sponsor", required = false)
                                                       String sponsor,
                                               HttpServletRequest request) throws InterruptedException, ExecutionException {
-        UrlValidator urlValidator = new UrlValidator(new String[]{"http",
-                "https"});
+        UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
         if (urlValidator.isValid(url)) {
             UUID uuid = UUID.randomUUID();
             boolean added = cacheService.addUrl(uuid, url);
@@ -65,7 +64,7 @@ public class UrlShortenerController {
                     return new ResponseEntity<>(HttpStatus.CONFLICT);
                 }
             } else {
-                return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

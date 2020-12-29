@@ -1,6 +1,5 @@
 package urlshortener.tasks;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,11 +16,14 @@ import java.util.stream.Collectors;
 @Component
 public class UrlDealer {
 
-    @Autowired
-    CacheService cacheService;
+    final CacheService cacheService;
 
-    @Autowired
-    MaliciousService maliciousService;
+    final MaliciousService maliciousService;
+
+    public UrlDealer(CacheService cacheService, MaliciousService maliciousService) {
+        this.cacheService = cacheService;
+        this.maliciousService = maliciousService;
+    }
 
     /*
         This functions is going to check pending requests every 5 seconds
