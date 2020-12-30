@@ -54,4 +54,14 @@ public class GeoLocation {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public String toString() {
+        return ipAddress + ':' + city + ':' + latitude + ':' + longitude + ':' + country;
+    }
+
+    public static GeoLocation createGeoLocation(String value) {
+        String[] parameters = value.split(":");
+        return new GeoLocation(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+    }
 }

@@ -3,17 +3,13 @@ package urlshortener.web;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 
 import com.maxmind.geoip2.exception.GeoIp2Exception;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,26 +18,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import urlshortener.broker.BrokerClient;
+import urlshortener.broker.BrokerConfig;
 import urlshortener.domain.GeoLocation;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
-import urlshortener.service.GeoLocationService;
 import urlshortener.service.ShortURLService;
 
+@Profile("webapp")
 @RestController
 public class UrlShortenerController {
   private final ShortURLService shortUrlService;
 
   private final ClickService clickService;
-  private final GeoLocationService geoLocationService;
+
+  private BrokerClient brokerClient;
 
   public UrlShortenerController(ShortURLService shortUrlService,
                                 ClickService clickService,
-                                GeoLocationService geoLocationService)
+                                BrokerClient brokerClient)
   {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
-    this.geoLocationService = geoLocationService;
+    this.brokerClient = brokerClient;
   }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
@@ -50,12 +49,15 @@ public class UrlShortenerController {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       try {
-        GeoLocation loc = geoLocationService.getLocation(extractIP(request));
-        clickService.saveClick(id, extractIP(request), loc);
-      } catch (IOException | GeoIp2Exception e) {
+        GeoLocation geoLocation = brokerClient.getLocationFromIp(extractIP(request));
+        if (geoLocation != null) {
+          clickService.saveClick(id, extractIP(request), geoLocation);
+        } else {
+          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+      } catch (IOException e) {
         e.printStackTrace();
       }
-
       return createSuccessfulRedirectToResponse(l);
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
