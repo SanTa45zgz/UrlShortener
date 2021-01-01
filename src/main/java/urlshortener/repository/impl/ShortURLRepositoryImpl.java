@@ -2,8 +2,6 @@ package urlshortener.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -61,19 +59,19 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
         return su;
     }
 
-    @Override
-    public ShortURL mark(ShortURL su, boolean safeness) {
-        try {
-            jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness,
-                    su.getHash());
-            ShortURL res = new ShortURL();
-            BeanUtils.copyProperties(su, res);
-            new DirectFieldAccessor(res).setPropertyValue("safe", safeness);
-            return res;
-        } catch (Exception e) {
-            log.debug("When update", e);
-            return null;
-        }
+  @Override
+  public ShortURL mark(ShortURL su, boolean safeness) {
+    try {
+      jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness,
+          su.getHash());
+      return new ShortURL(
+        su.getHash(), su.getTarget(), su.getUri(), su.getSponsor(),
+        su.getCreated(), su.getOwner(), su.getMode(), safeness,
+        su.getIP(), su.getCountry()
+      );
+    } catch (Exception e) {
+      log.debug("When update", e);
+      return null;
     }
 
     @Override

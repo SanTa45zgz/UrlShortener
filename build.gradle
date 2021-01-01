@@ -10,6 +10,8 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+
+
 repositories {
     mavenCentral()
 }
@@ -18,9 +20,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // https://mvnrepository.com/artifact/com.maxmind.geoip2/geoip2
+    compile group: 'com.maxmind.geoip2', name: 'geoip2', version: '2.3.1'
+
+    compile group: 'org.jvnet.sorcerer', name: 'sorcerer-javac', version: '0.8'
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-amqp', version: '2.4.1'
 
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
+
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     runtime 'org.webjars:bootstrap:3.3.5'
     runtime 'org.webjars:jquery:2.1.4'
@@ -29,6 +41,10 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.httpcomponents:httpclient'
+}
+
+sourceSets.main.resources {
+    srcDirs "src/main/resources", "src/main/configs"
 }
 
 clean.doFirst {

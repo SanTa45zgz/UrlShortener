@@ -1,9 +1,17 @@
 package urlshortener.repository.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.dao.DuplicateKeyException;
+
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -22,19 +30,34 @@ import java.util.List;
 @Repository
 public class ClickRepositoryImpl implements ClickRepository {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(ClickRepositoryImpl.class);
+  private static final Logger log = LoggerFactory
+      .getLogger(ClickRepositoryImpl.class);
 
-    private static final RowMapper<Click> rowMapper =
-            (rs, rowNum) -> new Click(rs.getLong("id"), rs.getString("hash"),
-                    rs.getDate("created"), rs.getString("referrer"),
-                    rs.getString("browser"), rs.getString("platform"),
-                    rs.getString("ip"), rs.getString("country"));
+  private static final RowMapper<Click> rowMapper =
+      (rs, rowNum) -> new Click(rs.getLong("id"), rs.getString("hash"),
+          rs.getDate("created"), rs.getString("referrer"),
+          rs.getString("browser"), rs.getString("platform"),
+          rs.getString("ip"), rs.getString("country"));
 
-    private final JdbcTemplate jdbc;
+  private static final RowMapper<Pair<String, Long>> pairMapper =
+          (rs, rowNum) -> Pair.of(
+                  rs.getString("country"), rs.getLong("cuenta")
+          );
 
-    public ClickRepositoryImpl(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
+  private final JdbcTemplate jdbc;
+
+  public ClickRepositoryImpl(JdbcTemplate jdbc) {
+    this.jdbc = jdbc;
+  }
+
+  @Override
+  public List<Click> findByHash(String hash) {
+    try {
+      return jdbc.query("SELECT * FROM click WHERE hash=?",
+          new Object[] {hash}, rowMapper);
+    } catch (Exception e) {
+      log.debug("When select for hash " + hash, e);
+      return Collections.emptyList();
     }
 
     @Override
@@ -116,16 +139,40 @@ public class ClickRepositoryImpl implements ClickRepository {
             log.debug("When delete all", e);
         }
     }
+    return -1L;
+  }
 
-    @Override
-    public Long count() {
-        try {
-            return jdbc
-                    .queryForObject("select count(*) from click", Long.class);
-        } catch (Exception e) {
-            log.debug("When counting", e);
-        }
-        return -1L;
+  @Override
+  public Long countByIp() {
+    try{
+      return jdbc.queryForObject("select count(*) from " +
+              "(select ip from click group by ip)", Long.class);
+    }catch (Exception e) {
+      log.debug("When counting", e);
+    }
+    return -1L;
+  }
+
+  @Override
+  public List<Pair<String, Long>> countByCountry() {
+    try{
+      return jdbc.query("select country, count(*) as cuenta" +
+              " from click group by country order by count(*) desc", pairMapper);
+    }catch (Exception e) {
+      log.debug("When counting", e);
+    }
+    return null;
+  }
+
+  @Override
+  public List<Click> list(Long limit, Long offset) {
+    try {
+      return jdbc.query("SELECT * FROM click LIMIT ? OFFSET ?",
+          new Object[] {limit, offset}, rowMapper);
+    } catch (Exception e) {
+      log.debug("When select for limit " + limit + " and offset "
+          + offset, e);
+      return Collections.emptyList();
     }
 
     @Override
@@ -152,4 +199,26 @@ public class ClickRepositoryImpl implements ClickRepository {
         return -1L;
     }
 
+  @Override
+  public Long updateCounter(String key, long value) {
+    try {
+      jdbc.update("update counters set value=value+? where key=?", value, key);
+      return getCounter(key);
+    } catch (Exception e) {
+      log.debug("Fallo al actualizar contador de " + key);
+    }
+    return -1L;
+  }
+
+  @Override
+  public Long getCounter(String key) {
+    try {
+      return jdbc
+              .queryForObject("select value from counters where key = ?", new Object[] {key},
+                      Long.class);
+    } catch (Exception e) {
+      log.debug("When counting " + key, e);
+    }
+    return -1L;
+  }
 }

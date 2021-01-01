@@ -1,9 +1,26 @@
 package urlshortener.web;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
+
+import com.maxmind.geoip2.exception.GeoIp2Exception;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import urlshortener.broker.BrokerClient;
+import urlshortener.broker.BrokerConfig;
+import urlshortener.domain.GeoLocation;
 import org.springframework.web.bind.annotation.*;
 import urlshortener.domain.Match;
 import urlshortener.domain.ShortURL;
@@ -18,20 +35,44 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+@Profile("webapp")
 @RestController
 public class UrlShortenerController {
     private final ShortURLService shortUrlService;
 
     private final ClickService clickService;
 
-    private final CacheService cacheService;
+  private BrokerClient brokerClient;
 
-    public UrlShortenerController(ShortURLService shortUrlService, ClickService clickService, CacheService cacheService) {
-        this.shortUrlService = shortUrlService;
-        this.clickService = clickService;
-        this.cacheService = cacheService;
+  public UrlShortenerController(ShortURLService shortUrlService,
+                                ClickService clickService,
+                                BrokerClient brokerClient)
+  {
+    this.shortUrlService = shortUrlService;
+    this.clickService = clickService;
+    this.brokerClient = brokerClient;
+  }
+
+  @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
+  public ResponseEntity<?> redirectTo(@PathVariable String id,
+                                      HttpServletRequest request) {
+    ShortURL l = shortUrlService.findByKey(id);
+    if (l != null) {
+      try {
+        GeoLocation geoLocation = brokerClient.getLocationFromIp(extractIP(request));
+        if (geoLocation != null) {
+          clickService.saveClick(id, extractIP(request), geoLocation);
+        } else {
+          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return createSuccessfulRedirectToResponse(l);
+    } else {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
+}
     @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
     public ResponseEntity<?> redirectTo(@PathVariable String id,
                                         HttpServletRequest request) {
