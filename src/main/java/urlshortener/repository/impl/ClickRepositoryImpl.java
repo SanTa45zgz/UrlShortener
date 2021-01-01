@@ -182,12 +182,14 @@ public class ClickRepositoryImpl implements ClickRepository {
   }
 
   @Override
-  public void updateCounter(String key, long value) {
+  public Long updateCounter(String key, long value) {
     try {
       jdbc.update("update counters set value=value+? where key=?", value, key);
+      return getCounter(key);
     } catch (Exception e) {
       log.debug("Fallo al actualizar contador de " + key);
     }
+    return -1L;
   }
 
   @Override

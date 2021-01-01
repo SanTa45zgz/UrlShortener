@@ -34,9 +34,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countNumClick(){
         long clicks = brokerClient.getNumClicksFromServers();
-        // TODO: Igual hay que cambiarlos
-        metricsService.saveNewClicks(clicks);
-        Gauge.builder("sysinfo.clicks", metricsService.getNewClicks(), value -> value)
+        long newClicks = metricsService.updateNewClicks(clicks);
+        Gauge.builder("sysinfo.clicks", newClicks, value -> value)
                 .description("Total amount of clicks")
                 .register(registry);
 //        log.info("NumClicks calculated");
@@ -45,7 +44,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countNumUris(){
         long uris = brokerClient.countNumUris();
-        Gauge.builder("sysinfo.uris", uris, value -> value)
+        long newUris = metricsService.updateNewUris(uris);
+        Gauge.builder("sysinfo.uris", newUris, value -> value)
                 .description("Total amount of uris shortened")
                 .register(registry);
 //        log.info("NumUris shortened calculated");
@@ -54,7 +54,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countNumUsers(){
         long users = brokerClient.countUsers();
-        Gauge.builder("sysinfo.users", users, value -> value)
+        long newUsers = metricsService.updateNewUsers(users);
+        Gauge.builder("sysinfo.users", newUsers, value -> value)
                 .description("Total amount of users connected")
                 .register(registry);
 //        log.info("NumUsers calculated");

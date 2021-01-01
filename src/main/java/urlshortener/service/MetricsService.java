@@ -46,12 +46,16 @@ public class MetricsService {
 
     /* ------------ Increment functions ------------ */
 
-    public void saveNewClicks(long clicks) {
-        clickRepository.updateCounter("clicks", clicks);
+    public Long updateNewClicks(long clicks) {
+        return clickRepository.updateCounter("clicks", clicks);
     }
 
-    public Long getNewClicks() {
-        return  clickRepository.getCounter("clicks");
+    public Long updateNewUris(long uris) {
+        return clickRepository.updateCounter("uris", uris);
+    }
+
+    public Long updateNewUsers(long users) {
+        return clickRepository.updateCounter("users", users);
     }
 
 }

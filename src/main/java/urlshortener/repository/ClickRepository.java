@@ -27,7 +27,7 @@ public interface ClickRepository {
 
   List<Click> list(Long limit, Long offset);
 
-  void updateCounter(String key, long value);
+  Long updateCounter(String key, long value);
 
   Long getCounter(String key);
 
