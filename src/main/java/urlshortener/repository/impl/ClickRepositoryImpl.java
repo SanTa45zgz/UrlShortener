@@ -6,12 +6,12 @@ import java.sql.Types;
 import java.util.Collections;
 import java.util.List;
 
-import com.sun.tools.javac.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.dao.DuplicateKeyException;
 
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -34,7 +34,7 @@ public class ClickRepositoryImpl implements ClickRepository {
           rs.getString("ip"), rs.getString("country"));
 
   private static final RowMapper<Pair<String, Long>> pairMapper =
-          (rs, rowNum) -> new Pair<String, Long>(
+          (rs, rowNum) -> Pair.of(
                   rs.getString("country"), rs.getLong("cuenta")
           );
 
@@ -181,4 +181,24 @@ public class ClickRepositoryImpl implements ClickRepository {
     return -1L;
   }
 
+  @Override
+  public void updateCounter(String key, long value) {
+    try {
+      jdbc.update("update counters set value=value+? where key=?", value, key);
+    } catch (Exception e) {
+      log.debug("Fallo al actualizar contador de " + key);
+    }
+  }
+
+  @Override
+  public Long getCounter(String key) {
+    try {
+      return jdbc
+              .queryForObject("select value from counters where key = ?", new Object[] {key},
+                      Long.class);
+    } catch (Exception e) {
+      log.debug("When counting " + key, e);
+    }
+    return -1L;
+  }
 }

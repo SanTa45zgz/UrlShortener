@@ -1,9 +1,9 @@
 package urlshortener.repository.impl;
 
-import com.sun.tools.javac.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -23,7 +23,7 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<Pair<String, Long>> rowMapper =
-            (rs, rowNum) -> new Pair<>(
+            (rs, rowNum) -> Pair.of(
                     rs.getString("hash"), rs.getLong("cuenta")
             );
 

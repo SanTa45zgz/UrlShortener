@@ -1,6 +1,5 @@
 package urlshortener.broker;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -44,9 +43,9 @@ public class BrokerConfig {
 
     @Profile("worker")
     @Bean
-    public BrokerServer brokerServer(MeterRegistry registry, ShortURLRepository shortURLRepository, ClickRepository clickRepository,
+    public BrokerServer brokerServer(ShortURLRepository shortURLRepository, ClickRepository clickRepository,
                                      SystemInfoRepository systemInfoRepository, GeoLocationService geoLocationService) {
-        return new BrokerServer(new MetricsService(registry, shortURLRepository, clickRepository, systemInfoRepository, geoLocationService));
+        return new BrokerServer(new MetricsService(shortURLRepository, clickRepository, systemInfoRepository), geoLocationService);
     }
 
 }
