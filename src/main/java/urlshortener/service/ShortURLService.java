@@ -30,10 +30,14 @@ public class ShortURLService {
                 .createdNow()
                 .randomOwner()
                 .temporaryRedirect()
-                .treatAsSafe()
                 .ip(ip)
                 .unknownCountry()
                 .build();
         return shortURLRepository.save(su);
+    }
+
+    public void updateShortURLSafeness(String url, boolean safe) {
+        shortURLRepository.updateSafeness(url, safe);
+        System.out.println("Url actualizada ==> " + url + " con seguridad " + safe);
     }
 }

@@ -2,12 +2,9 @@ package urlshortener.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
-
 import urlshortener.repository.SystemInfoRepository;
 
 import java.util.ArrayList;
@@ -34,14 +31,37 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     @Override
     public List<Pair<String, Long>> getTopUris() {
         List<Pair<String, Long>> topUris = new ArrayList<>();
-        try{
+        try {
             topUris = jdbc.query("select hash, count (*) as cuenta " +
                     "from shorturl right join click on shorturl.hash=click.hash " +
-                    "group by hash order by count(*) desc limit 10 ", rowMapper );
-        }catch (Exception e){
+                    "group by hash order by count(*) desc limit 10 ", rowMapper);
+        } catch (Exception e) {
             log.debug("When select ", e);
         }
         return topUris;
+    }
+
+    @Override
+    public Long updateCounter(String key, long value) {
+        try {
+            jdbc.update("update counters set value=value+? where key=?", value, key);
+            return getCounter(key);
+        } catch (Exception e) {
+            log.debug("Fallo al actualizar contador de " + key);
+        }
+        return -1L;
+    }
+
+    @Override
+    public Long getCounter(String key) {
+        try {
+            return jdbc
+                    .queryForObject("select value from counters where key = ?", new Object[]{key},
+                            Long.class);
+        } catch (Exception e) {
+            log.debug("When counting " + key, e);
+        }
+        return -1L;
     }
 
 }

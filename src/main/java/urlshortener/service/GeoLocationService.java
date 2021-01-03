@@ -8,7 +8,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.GeoLocation;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -22,9 +21,7 @@ public class GeoLocationService {
     private final DatabaseReader dbReader;
 
     public GeoLocationService(ResourceLoader resourceLoader) throws IOException {
-        System.out.println("Creando InputStream de la DB");
         InputStream database = resourceLoader.getResource("classpath:GeoLite2-City.mmdb").getInputStream();
-        System.out.println("Creando DatabaseReader");
         dbReader = new DatabaseReader.Builder(database).build();
     }
 

@@ -9,4 +9,8 @@ import java.util.List;
 public interface SystemInfoRepository {
 
     List<Pair<String, Long>> getTopUris();
+
+    Long updateCounter(String key, long value);
+
+    Long getCounter(String key);
 }

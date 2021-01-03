@@ -3,12 +3,17 @@ package urlshortener.broker;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.SendTo;
+import urlshortener.service.CacheService;
 import urlshortener.service.GeoLocationService;
 import urlshortener.service.MetricsService;
 
 import java.io.IOException;
 
-public class BrokerServer  {
+public class BrokerServer {
+
+    @Autowired
+    private CacheService cacheService;
 
     @Autowired
     private final MetricsService metricsService;
@@ -30,7 +35,7 @@ public class BrokerServer  {
         String option = params[0];
 
         System.out.println("[*] Instrucción recibida: " + option);
-        switch(option) {
+        switch (option) {
             case "location":
                 try {
                     return geoLocationService.getLocation(params[1]);
@@ -48,9 +53,18 @@ public class BrokerServer  {
                 return metricsService.getHttpRedirects();
             case "geoRedirects":
                 return metricsService.getGeoRedirects();
+            case "validate":
+                validateUrl(message);
             default:
+                System.out.println("No se reconoce este comando ==> " + option);
                 return null;
         }
+    }
+
+    private void validateUrl(String message) {
+        String url = message.substring(9);
+        // Añadir a la cola para procesar
+        cacheService.addUrl(url);
     }
 
 }

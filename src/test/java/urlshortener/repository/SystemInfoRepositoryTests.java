@@ -1,18 +1,10 @@
 package urlshortener.repository;
 
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import urlshortener.fixtures.ShortURLFixture;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import urlshortener.repository.impl.ShortURLRepositoryImpl;
 import urlshortener.repository.impl.SystemInfoRepositoryImpl;
 

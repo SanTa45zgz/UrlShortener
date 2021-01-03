@@ -59,19 +59,20 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
         return su;
     }
 
-  @Override
-  public ShortURL mark(ShortURL su, boolean safeness) {
-    try {
-      jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness,
-          su.getHash());
-      return new ShortURL(
-        su.getHash(), su.getTarget(), su.getUri(), su.getSponsor(),
-        su.getCreated(), su.getOwner(), su.getMode(), safeness,
-        su.getIP(), su.getCountry()
-      );
-    } catch (Exception e) {
-      log.debug("When update", e);
-      return null;
+    @Override
+    public ShortURL mark(ShortURL su, boolean safeness) {
+        try {
+            jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness,
+                    su.getHash());
+            return new ShortURL(
+                    su.getHash(), su.getTarget(), su.getUri(), su.getSponsor(),
+                    su.getCreated(), su.getOwner(), su.getMode(), safeness,
+                    su.getIP(), su.getCountry()
+            );
+        } catch (Exception e) {
+            log.debug("When update", e);
+            return null;
+        }
     }
 
     @Override
@@ -126,6 +127,16 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
         } catch (Exception e) {
             log.debug("When select for target " + target, e);
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void updateSafeness(String url, boolean safe) {
+        try {
+            jdbc.update(
+                    "update shorturl set safe=? where target=?", safe, url);
+        } catch (Exception e) {
+            log.debug("When update safeness for target {}", url, e);
         }
     }
 }

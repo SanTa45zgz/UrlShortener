@@ -25,14 +25,15 @@ public class PrometheusCounters {
     private static final Logger log = LoggerFactory
             .getLogger(ClickService.class);
 
-    public PrometheusCounters(MeterRegistry meterRegistry, BrokerClient brokerClient, MetricsService metricsService){
+    public PrometheusCounters(MeterRegistry meterRegistry, BrokerClient brokerClient, MetricsService metricsService) {
         this.registry = meterRegistry;
 
         this.brokerClient = brokerClient;
         this.metricsService = metricsService;
     }
+
     @Scheduled(fixedRate = 1000)
-    public void countNumClick(){
+    public void countNumClick() {
         long clicks = brokerClient.getNumClicksFromServers();
         long newClicks = metricsService.updateNewClicks(clicks);
         Gauge.builder("sysinfo.clicks", newClicks, value -> value)
@@ -42,7 +43,7 @@ public class PrometheusCounters {
     }
 
     @Scheduled(fixedRate = 1000)
-    public void countNumUris(){
+    public void countNumUris() {
         long uris = brokerClient.countNumUris();
         long newUris = metricsService.updateNewUris(uris);
         Gauge.builder("sysinfo.uris", newUris, value -> value)
@@ -52,7 +53,7 @@ public class PrometheusCounters {
     }
 
     @Scheduled(fixedRate = 1000)
-    public void countNumUsers(){
+    public void countNumUsers() {
         long users = brokerClient.countUsers();
         long newUsers = metricsService.updateNewUsers(users);
         Gauge.builder("sysinfo.users", newUsers, value -> value)
@@ -62,7 +63,7 @@ public class PrometheusCounters {
     }
 
     @Scheduled(fixedDelay = 1000)
-    public void http_redirects(){
+    public void http_redirects() {
         List<Pair<String, Long>> topUris = brokerClient.getRankingUris();
         for (Pair<String, Long> item : topUris) {
             registry.counter("http.redirects",
@@ -74,7 +75,7 @@ public class PrometheusCounters {
     }
 
     @Scheduled(fixedDelay = 1000)
-    public void geo_redirects(){
+    public void geo_redirects() {
         List<Pair<String, Long>> country_redirects = brokerClient.getCountryCount();
         for (Pair<String, Long> item : country_redirects) {
             registry.counter("geo.redirects",

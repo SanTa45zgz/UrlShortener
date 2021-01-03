@@ -1,7 +1,5 @@
 package urlshortener.repository;
 
-import java.util.List;
-
 import org.springframework.data.util.Pair;
 import urlshortener.domain.Click;
 
@@ -23,14 +21,10 @@ public interface ClickRepository {
 
     Long count();
 
-  Long countByIp();
+    Long countByIp();
 
-  List<Pair<String, Long>> countByCountry();
+    List<Pair<String, Long>> countByCountry();
 
-  List<Click> list(Long limit, Long offset);
-
-  Long updateCounter(String key, long value);
-
-  Long getCounter(String key);
+    List<Click> list(Long limit, Long offset);
 
 }

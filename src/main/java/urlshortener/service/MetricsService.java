@@ -31,7 +31,7 @@ public class MetricsService {
     }
 
     public long getNumUsers() {
-        return  clickRepository.countByIp();
+        return clickRepository.countByIp();
     }
 
     public String getHttpRedirects() {
@@ -47,15 +47,15 @@ public class MetricsService {
     /* ------------ Increment functions ------------ */
 
     public Long updateNewClicks(long clicks) {
-        return clickRepository.updateCounter("clicks", clicks);
+        return systemInfoRepository.updateCounter("clicks", clicks);
     }
 
     public Long updateNewUris(long uris) {
-        return clickRepository.updateCounter("uris", uris);
+        return systemInfoRepository.updateCounter("uris", uris);
     }
 
     public Long updateNewUsers(long users) {
-        return clickRepository.updateCounter("users", users);
+        return systemInfoRepository.updateCounter("users", users);
     }
 
 }

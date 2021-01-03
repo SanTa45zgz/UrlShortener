@@ -40,10 +40,10 @@ public class BrokerClient {
     public long getNumClicksFromServers() {
 //        log.info("Pidiendo click al server");
 
-        Object response = template.convertSendAndReceive(exchange.getName(),"rpc", "clicks:dummy");
+        Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "clicks:dummy");
 
         long counter = -1;
-        try{
+        try {
             counter = (long) response;
             log.info("Num de clicks => " + counter);
         } catch (NullPointerException exception) {
@@ -55,10 +55,10 @@ public class BrokerClient {
     public long countNumUris() {
 //        log.info("Pidiendo numUris al server");
 
-        Object response = template.convertSendAndReceive(exchange.getName(),"rpc", "uris:dummy");
+        Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "uris:dummy");
 
         long counter = -1;
-        try{
+        try {
             counter = (long) response;
             log.info("Num de uris => " + counter);
         } catch (NullPointerException exception) {
@@ -70,10 +70,10 @@ public class BrokerClient {
     public long countUsers() {
 //        log.info("Pidiendo numUsers al server");
 
-        Object response = template.convertSendAndReceive(exchange.getName(),"rpc", "users:dummy");
+        Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "users:dummy");
 
         long counter = -1;
-        try{
+        try {
             counter = (long) response;
             log.info("Num de users => " + counter);
         } catch (NullPointerException exception) {
@@ -85,7 +85,7 @@ public class BrokerClient {
     public List<Pair<String, Long>> getRankingUris() {
 //        log.info("Pidiendo rankingUris al server");
 
-        Object response = template.convertSendAndReceive(exchange.getName(),"rpc", "httpRedirects:dummy");
+        Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "httpRedirects:dummy");
 
         List<Pair<String, Long>> result = getPairs((String) response);
         log.info("Num de rankingUris => " + result.size());
@@ -95,7 +95,7 @@ public class BrokerClient {
     public List<Pair<String, Long>> getCountryCount() {
 //        log.info("Pidiendo numUsers al server");
 
-        Object response = template.convertSendAndReceive(exchange.getName(),"rpc", "geoRedirects:dummy");
+        Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "geoRedirects:dummy");
 
         List<Pair<String, Long>> result = getPairs((String) response);
         log.info("Num de geoRedirects => " + result.size());
@@ -104,11 +104,17 @@ public class BrokerClient {
 
     private List<Pair<String, Long>> getPairs(String response) {
         List<Pair<String, Long>> result = new ArrayList<>();
-        try{
+        try {
             result = RedirectList.createHttpRedirects(response).getRedirects();
         } catch (NullPointerException exception) {
             log.info("No se han podido obtener redirects: " + exception);
         }
         return result;
     }
+
+    public void validateUrl(String url) {
+        template.convertAndSend(exchange.getName(),"rpc", "validate:" + url);
+    }
+
+
 }

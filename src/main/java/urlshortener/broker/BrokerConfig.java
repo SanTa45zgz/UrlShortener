@@ -12,6 +12,7 @@ import urlshortener.repository.ShortURLRepository;
 import urlshortener.repository.SystemInfoRepository;
 import urlshortener.service.GeoLocationService;
 import urlshortener.service.MetricsService;
+import urlshortener.service.ShortURLService;
 
 @Configuration
 public class BrokerConfig {
@@ -22,8 +23,18 @@ public class BrokerConfig {
     }
 
     @Bean
+    public Queue responseQueue() {
+        return new Queue("url.shortener.rpc.responses.responses");
+    }
+
+    @Bean
     public DirectExchange exchange() {
         return new DirectExchange("url.shortener.rpc");
+    }
+
+    @Bean
+    public DirectExchange exchangeResponses() {
+        return new DirectExchange("url.shortener.rpc.responses");
     }
 
     @Bean
@@ -34,11 +45,24 @@ public class BrokerConfig {
                 .with("rpc");
     }
 
+    @Bean
+    public Binding responseBinding(DirectExchange exchangeResponses,
+                           Queue responseQueue) {
+        return BindingBuilder.bind(responseQueue)
+                .to(exchangeResponses)
+                .with("rpc-responses");
+    }
+
     @Profile("webapp")
     @Bean
-    BrokerClient brokerClient() {
-        System.out.println("Creando BrokerClient");
+    public BrokerClient brokerClient() {
         return new BrokerClient();
+    }
+
+    @Profile("webapp")
+    @Bean
+    public BrokerSafeness brokerSafeness(ShortURLService shortURLService) {
+        return new BrokerSafeness(shortURLService);
     }
 
     @Profile("worker")
