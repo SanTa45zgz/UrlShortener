@@ -3,7 +3,6 @@ package urlshortener.web;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
@@ -35,28 +34,15 @@ public class RedirectController {
         ShortURL l = shortUrlService.findByKey(id);
         if (l != null && l.getSponsor() != null){
             return createSuccessfulRedirectToResponse(id);
-            //return "ad"; // Busca la vista "a-view" (normalmente en resources/templates), la genera inyectando el modelo y la devuelve una representación con un 200
         }
         else{
             if (l != null) {
-                System.out.println("ENTRAMOS");
                 clickService.saveClick(id, extractIP(request));
                 return createSuccessfulRedirectToResponse(l);
-                //return "redirect:"+l.getTarget(); // devuelve un 302 con un Location: http://some.page.web/
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
-    }
-
-    @Cacheable(cacheNames="ad")
-    @GetMapping("/ad/{.*}")
-    public String redirectToAd(HttpServletResponse response) {
-        System.out.println("CARGA PAGINA INTERSTICIAL");
-        //https://www.baeldung.com/spring-response-header
-        //https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control
-        response.setHeader("Cache-Control", "public, max-age=604800, immutable");
-        return "ad";
     }
 
     @GetMapping(value = "/redirect/{hash}")
