@@ -16,7 +16,7 @@ public class AdController {
         System.out.println("CARGA PAGINA INTERSTICIAL");
         //https://www.baeldung.com/spring-response-header
         //https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control
-        response.setHeader("Cache-Control", "public, max-age=604800, immutable");
+        response.setHeader("Cache-Control", "public, max-age=3600");
         return "ad";
     }
 

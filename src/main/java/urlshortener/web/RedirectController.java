@@ -1,10 +1,12 @@
 package urlshortener.web;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +67,9 @@ public class RedirectController {
         h.add("Location", "ad/"+id);
         //https://www.baeldung.com/spring-response-header
         //https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control
-        h.set("Cache-Control", "public, max-age=604800, immutable");
+        CacheControl cacheControl = CacheControl.maxAge(60, TimeUnit.MINUTES)
+            .cachePublic();
+        h.setCacheControl(cacheControl);
         return new ResponseEntity<>(h, HttpStatus.FOUND);
     }
 
