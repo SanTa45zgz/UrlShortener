@@ -29,6 +29,9 @@ dependencies {
 
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-amqp', version: '2.4.1'
 
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
 

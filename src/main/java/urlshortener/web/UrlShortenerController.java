@@ -1,5 +1,8 @@
 package urlshortener.web;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;

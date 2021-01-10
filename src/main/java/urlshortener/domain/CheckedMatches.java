@@ -1,13 +1,27 @@
 package urlshortener.domain;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Schema(name = "CheckedMatches", type = "object")
 public class CheckedMatches {
 
+    @Schema(
+            description = "List of urls sent to check",
+            example = "{\"http://www.google.com\",\"http://google.es\"",
+            required = true
+    )
     private final List<String> urls;
 
+    @Schema(
+            description = "List of urls with matches",
+            example = "{\"http://google.es\"",
+            required = true
+    )
     private final List<String> matches;
 
     public CheckedMatches(List<String> urls, List<String> matches) {
