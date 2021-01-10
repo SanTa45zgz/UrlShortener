@@ -1,8 +1,11 @@
 package urlshortener.service;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,10 @@ import java.net.InetAddress;
 @Profile("worker")
 @Service
 public class GeoLocationService {
+
+    private static final Logger log = LoggerFactory
+            .getLogger(ClickService.class);
+
     private final DatabaseReader dbReader;
 
     private long counter = 0;
@@ -29,13 +36,16 @@ public class GeoLocationService {
 
     public GeoLocation getLocation(String ip)
             throws IOException, GeoIp2Exception {
-        CityResponse response = dbReader.city(InetAddress.getByName(ip));
-
-        String cityName = response.getCity().getName();
-        String latitude = response.getLocation().getLatitude().toString();
-        String longitude = response.getLocation().getLongitude().toString();
-        String country = response.getCountry().getName();
-        return new GeoLocation(ip, cityName, latitude, longitude, country);
+        try{
+            CityResponse response = dbReader.city(InetAddress.getByName(ip));
+            String cityName = response.getCity().getName();
+            String latitude = response.getLocation().getLatitude().toString();
+            String longitude = response.getLocation().getLongitude().toString();
+            String country = response.getCountry().getName();
+            return new GeoLocation(ip, cityName, latitude, longitude, country);
+        } catch (AddressNotFoundException e){
+            return GeoLocation.geoLocationFixture();
+        }
     }
 
     public long getCounter() {

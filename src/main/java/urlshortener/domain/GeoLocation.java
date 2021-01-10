@@ -64,4 +64,8 @@ public class GeoLocation {
         String[] parameters = value.split(":");
         return new GeoLocation(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
+
+    public static GeoLocation geoLocationFixture() {
+        return new GeoLocation(null, null, null, null, "Undefined");
+    }
 }

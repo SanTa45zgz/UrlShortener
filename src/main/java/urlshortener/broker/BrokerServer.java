@@ -35,7 +35,7 @@ public class BrokerServer {
         switch (option) {
             case "location":
                 try {
-                    return geoLocationService.getLocation(params[1]);
+                    return geoLocationService.getLocation(params[1]).toString();
                 } catch (GeoIp2Exception | IOException e) {
                     e.printStackTrace();
                 }
