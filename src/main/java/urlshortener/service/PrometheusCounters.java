@@ -33,57 +33,88 @@ public class PrometheusCounters {
     }
 
     @Scheduled(fixedRate = 1000)
-    public void countNumClick() {
-        long clicks = brokerClient.getNumClicksFromServers();
-        long newClicks = metricsService.updateNewClicks(clicks);
-        Gauge.builder("sysinfo.clicks", newClicks, value -> value)
+    public void countNumClick(){
+        Gauge.builder("sysinfo.clicks", metricsService::getNumClicks)
                 .description("Total amount of clicks")
                 .register(registry);
-//        log.info("NumClicks calculated");
+        log.info("NumClicks calculated");
     }
 
     @Scheduled(fixedRate = 1000)
-    public void countNumUris() {
-        long uris = brokerClient.countNumUris();
-        long newUris = metricsService.updateNewUris(uris);
-        Gauge.builder("sysinfo.uris", newUris, value -> value)
+    public void countNumUris(){
+        Gauge.builder("sysinfo.uris", metricsService::getNumUris)
                 .description("Total amount of uris shortened")
                 .register(registry);
-//        log.info("NumUris shortened calculated");
+        log.info("NumUris shortened calculated");
     }
 
     @Scheduled(fixedRate = 1000)
-    public void countNumUsers() {
-        long users = brokerClient.countUsers();
-        long newUsers = metricsService.updateNewUsers(users);
-        Gauge.builder("sysinfo.users", newUsers, value -> value)
+    public void countNumUsers(){
+        Gauge.builder("sysinfo.users", metricsService::getNumUsers)
                 .description("Total amount of users connected")
                 .register(registry);
-//        log.info("NumUsers calculated");
+        log.info("NumUsers calculated");
     }
 
     @Scheduled(fixedDelay = 1000)
-    public void http_redirects() {
-        List<Pair<String, Long>> topUris = brokerClient.getRankingUris();
+    public void http_redirects(){
+        List<Pair<String, Long>> topUris = getRankingUris();
         for (Pair<String, Long> item : topUris) {
             registry.counter("http.redirects",
                     "hash", item.getFirst(),
                     "value", item.getSecond().toString())
                     .increment();
         }
-//        log.info("TopUris calculated");
+        log.info("TopUris calculated");
     }
 
     @Scheduled(fixedDelay = 1000)
-    public void geo_redirects() {
-        List<Pair<String, Long>> country_redirects = brokerClient.getCountryCount();
+    public void geo_redirects(){
+        List<Pair<String, Long>> country_redirects = getCountryCount();
         for (Pair<String, Long> item : country_redirects) {
             registry.counter("geo.redirects",
                     "country", item.getFirst(),
                     "value", item.getSecond().toString())
                     .increment();
         }
-//        log.info("GeoRedirects calculated");
+        log.info("GeoRedirects calculated");
+    }
+
+    private List<Pair<String, Long>> getRankingUris(){
+        return metricsService.getHttpRedirects();
+    }
+    private List<Pair<String, Long>> getCountryCount(){
+        return metricsService.getGeoRedirects();
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void countTotalGeoLocations() {
+        long geoLocations = brokerClient.getTotalGeoLocations();
+        long newGeoLocations = metricsService.updateTotalGeoLocations(geoLocations);
+        Gauge.builder("sysinfo.totalGeoLocations", newGeoLocations, value -> value)
+                .description("Total amount of geoLocations calculated")
+                .register(registry);
+//        log.info("TotalGeoLocations calculated");
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void countTotalUrlsChecked() {
+        long urlsChecked = brokerClient.getTotalUrlsChecked();
+        long newUrlsChecked = metricsService.updateTotalGeoLocations(urlsChecked);
+        Gauge.builder("sysinfo.totalUrlsChecked", newUrlsChecked, value -> value)
+                .description("Total amount of urls checked")
+                .register(registry);
+//        log.info("TotalGeoLocations calculated");
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void countTotalUrlsSafe() {
+        long urlsSafe = brokerClient.getTotalUrlsSafe();
+        long newUrlsSafe = metricsService.updateTotalGeoLocations(urlsSafe);
+        Gauge.builder("sysinfo.totalUrlsSafe", newUrlsSafe, value -> value)
+                .description("Total amount of urls safe")
+                .register(registry);
+//        log.info("TotalGeoLocations calculated");
     }
 
 }

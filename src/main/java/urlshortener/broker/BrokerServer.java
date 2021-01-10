@@ -3,7 +3,6 @@ package urlshortener.broker;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.SendTo;
 import urlshortener.service.CacheService;
 import urlshortener.service.GeoLocationService;
 import urlshortener.service.MetricsService;
@@ -28,8 +27,6 @@ public class BrokerServer {
     }
 
     @RabbitListener(queues = "url.shortener.rpc.requests")
-    // @SendTo("url.shortener.rpc.replies") used when the
-    // client doesn't set replyTo.
     public Object receiver(String message) {
         String[] params = message.split(":");
         String option = params[0];
@@ -43,27 +40,28 @@ public class BrokerServer {
                     e.printStackTrace();
                 }
                 return null;
-            case "clicks":
-                return metricsService.getNumClicks();
-            case "uris":
-                return metricsService.getNumUris();
-            case "users":
-                return metricsService.getNumUsers();
-            case "httpRedirects":
-                return metricsService.getHttpRedirects();
-            case "geoRedirects":
-                return metricsService.getGeoRedirects();
             case "validate":
                 validateUrl(message);
+                return null;
+            case "totalGeoLocate":
+                return geoLocationService.getCounter();
+            case "totalChecked":
+                return 1L;
+            case "totalSafe":
+                return 2L;
             default:
                 System.out.println("No se reconoce este comando ==> " + option);
                 return null;
         }
     }
 
+    /**
+     * Extracts the url form the message received and adds the url received to the cache queue to be processed
+     * @param message Message received to extract the url
+     */
     private void validateUrl(String message) {
         String url = message.substring(9);
-        // Añadir a la cola para procesar
+        // Add to To-Process queue
         cacheService.addUrl(url);
     }
 

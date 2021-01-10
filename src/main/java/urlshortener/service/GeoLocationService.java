@@ -20,6 +20,8 @@ import java.net.InetAddress;
 public class GeoLocationService {
     private final DatabaseReader dbReader;
 
+    private long counter = 0;
+
     public GeoLocationService(ResourceLoader resourceLoader) throws IOException {
         InputStream database = resourceLoader.getResource("classpath:GeoLite2-City.mmdb").getInputStream();
         dbReader = new DatabaseReader.Builder(database).build();
@@ -30,12 +32,15 @@ public class GeoLocationService {
         CityResponse response = dbReader.city(InetAddress.getByName(ip));
 
         String cityName = response.getCity().getName();
-        String latitude =
-                response.getLocation().getLatitude().toString();
-        String longitude =
-                response.getLocation().getLongitude().toString();
+        String latitude = response.getLocation().getLatitude().toString();
+        String longitude = response.getLocation().getLongitude().toString();
         String country = response.getCountry().getName();
         return new GeoLocation(ip, cityName, latitude, longitude, country);
     }
 
+    public long getCounter() {
+        long total = counter;
+        counter = 0;
+        return total;
+    }
 }

@@ -14,19 +14,28 @@ public class CacheService {
     // Save the requests
     private final List<String> tempUrlList;
 
+    // Total urls added
+    private long totalCounter = 0;
+
+    // Total urls checked since last counter request
+    private long urlsChecked = 0;
+
     public CacheService() {
         this.tempUrlList = new ArrayList<>();
     }
 
-    /*
+    /**
         Adds a request to the waiting list
      */
-    public boolean addUrl(String url) {
-        return tempUrlList.add(url);
+    public void addUrl(String url) {
+        totalCounter++;
+        urlsChecked++;
+        tempUrlList.add(url);
     }
 
-    /*
-        Returns up to 500 requests saved in the waiting list
+    /**
+     * Returns up to 500 requests saved in the waiting list
+     * @return List up to 500 urls to send to Google Safe Api
      */
     public List<String> getTempUrlList() {
         List<String> urls;
@@ -40,6 +49,16 @@ public class CacheService {
             tempUrlList.subList(0, 500).clear();
         }
         return urls;
+    }
+
+    /**
+     * Get actual counter of urls checked since last
+     * @return counter of urls checked
+     */
+    public long getUrlsChecked() {
+        long checked = urlsChecked;
+        urlsChecked = 0;
+        return checked;
     }
 
 }

@@ -1,9 +1,11 @@
 package urlshortener.broker;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
 import urlshortener.domain.CheckedMatches;
 import urlshortener.service.ShortURLService;
 
+@Profile("webapp")
 public class BrokerSafeness {
 
     private final ShortURLService shortURLService;

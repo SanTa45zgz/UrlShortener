@@ -1,10 +1,13 @@
 package urlshortener.service;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.RedirectList;
 import urlshortener.repository.ClickRepository;
 import urlshortener.repository.ShortURLRepository;
 import urlshortener.repository.SystemInfoRepository;
+
+import java.util.List;
 
 @Service
 public class MetricsService {
@@ -34,28 +37,38 @@ public class MetricsService {
         return clickRepository.countByIp();
     }
 
-    public String getHttpRedirects() {
-        RedirectList redirectList = new RedirectList(systemInfoRepository.getTopUris());
-        return redirectList.toString();
+    public List<Pair<String, Long>> getHttpRedirects() {
+        return systemInfoRepository.getTopUris();
     }
 
-    public String getGeoRedirects() {
-        RedirectList redirectList = new RedirectList(clickRepository.countByCountry());
-        return redirectList.toString();
+    public List<Pair<String, Long>> getGeoRedirects() {
+        return clickRepository.countByCountry();
+    }
+
+    public long getTotalGeoLocations() {
+        return systemInfoRepository.getCounter("geoLocations");
+    }
+
+    public long getTotalUrlChecked() {
+        return systemInfoRepository.getCounter("urlChecked");
+    }
+
+    public long getTotalUrlSafe() {
+        return systemInfoRepository.getCounter("urlSafe");
     }
 
     /* ------------ Increment functions ------------ */
 
-    public Long updateNewClicks(long clicks) {
-        return systemInfoRepository.updateCounter("clicks", clicks);
+    public Long updateTotalGeoLocations(long geoLocations) {
+        return systemInfoRepository.updateCounter("geoLocations", geoLocations);
     }
 
-    public Long updateNewUris(long uris) {
-        return systemInfoRepository.updateCounter("uris", uris);
+    public Long updateTotalUrlChecked(long urlsChecked) {
+        return systemInfoRepository.updateCounter("urlChecked", urlsChecked);
     }
 
-    public Long updateNewUsers(long users) {
-        return systemInfoRepository.updateCounter("users", users);
+    public Long updateTotalUrlSafe(long urlsSafe) {
+        return systemInfoRepository.updateCounter("urlSafe", urlsSafe);
     }
 
 }

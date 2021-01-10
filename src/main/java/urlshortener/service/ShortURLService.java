@@ -24,7 +24,7 @@ public class ShortURLService {
     public ShortURL save(String url, String sponsor, String ip) {
         ShortURL su = ShortURLBuilder.newInstance()
                 .target(url)
-                .uri((String hash) -> linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null))
+                .uri((String hash) -> linkTo(methodOn(RedirectController.class).redirectTo(hash, null))
                         .toUri())
                 .sponsor(sponsor)
                 .createdNow()

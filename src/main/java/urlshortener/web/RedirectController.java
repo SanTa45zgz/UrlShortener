@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,35 +16,45 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import urlshortener.broker.BrokerClient;
+import urlshortener.domain.GeoLocation;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 
-
+@Profile("webapp")
 @Controller
 public class RedirectController {
     private final ShortURLService shortUrlService;
     private final ClickService clickService;
 
-    public RedirectController(ShortURLService shortUrlService, ClickService clickService) {
+    private final BrokerClient brokerClient;
+
+    public RedirectController(ShortURLService shortUrlService, ClickService clickService, BrokerClient brokerClient) {
         this.shortUrlService = shortUrlService;
         this.clickService = clickService;
+        this.brokerClient = brokerClient;
     }
     
     @GetMapping("/{id:(?!link|index).*}")
     public ResponseEntity<?> redirectTo(@PathVariable String id,
                                         HttpServletRequest request) {
         ShortURL l = shortUrlService.findByKey(id);
-        if (l != null && l.getSponsor() != null){
-            return createSuccessfulRedirectToResponse(id);
-        }
-        else{
-            if (l != null) {
-                clickService.saveClick(id, extractIP(request));
-                return createSuccessfulRedirectToResponse(l);
+        if (l != null && l.getSafe() != null && l.getSafe()){
+            GeoLocation geoLocation = brokerClient.getLocationFromIp(extractIP(request));
+            if (geoLocation != null) {
+                clickService.saveClick(id, extractIP(request), geoLocation);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            if (l.getSponsor() != null){
+                return createSuccessfulRedirectToResponse(id);
+            } else {
+                return createSuccessfulRedirectToResponse(l);
+            }
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -52,16 +63,16 @@ public class RedirectController {
                                             HttpServletRequest request) {
         System.out.println("Redireccionamos tras publi");
         ShortURL l = shortUrlService.findByKey(id);
-        clickService.saveClick(id, extractIP(request));
-        return new ResponseEntity<String>(l.getTarget(),HttpStatus.OK);
+        return new ResponseEntity<>(l.getTarget(), HttpStatus.OK);
     }
 
     private String extractIP(HttpServletRequest request) {
         return request.getRemoteAddr();
+
     }
 
     @Cacheable(cacheNames="toAd")
-    private ResponseEntity<?> createSuccessfulRedirectToResponse(String id) {
+    public ResponseEntity<?> createSuccessfulRedirectToResponse(String id) {
         System.out.println("REDIRECCION A PAGINA INTERSTICIAL");
         HttpHeaders h = new HttpHeaders();
         h.add("Location", "ad/"+id);
