@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Por favor, espere...</title>
+    <script src="/webjars/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+    <script src="/js/ad.js" type="text/javascript">
+    </script>
+  </head>
+  <body style="overflow: hidden;margin-left: 0;margin-top: 0;">
+    <div style="background-color: #1e166e; z-index:9999; position: absolute; width: 100%; height: 100%;">
+      <table cellpadding="0" cellspacing="0" height="100%" width="100%">
+        <tr height="1%" style="color:#ffffff">
+          <td style="top:0;width:100%">
+            <div id="top" style="width: 100%;" align="center">
+              <!-- Contador regresivo -->
+              <section>
+                <p>
+                  <strong>
+                    Por favor, espere 
+                    <span id="seconds"></span> segundos
+                  </strong>
+                </p>
+              </section>
+              <form action="" id="skip_ad">
+                <input id="hash" name="hash" type="hidden">
+                <button id="saltar" type="submit" disabled>Saltar publicidad</button>
+              </form>
+              <br>
+              <!-- Fin contador regresivo -->
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <iframe scrolling="auto" src="https://es.wikipedia.org/wiki/Wikipedia:Portada" frameborder="0" allowtransparency="true" style="width:100%;height:100%;display:block;visibility:visible;"></iframe>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => { 
+
+        //===
+        // VARIABLES
+        //===
+        // DOM for render
+        const SPAN_SECONDS = document.querySelector('span#seconds');
+        const BUTTON_SALTAR = document.getElementById('saltar');
+        const HASH = document.getElementById('hash');
+        // Milliseconds for the calculations
+        const MILLISECONDS_OF_A_SECOND = 1000;
+        SPAN_SECONDS.textContent = 11;
+
+        //===
+        // FUNCTIONS
+        //===
+
+        /**
+        * Method that updates the countdown and the sample
+        */
+        function updateCountdown() {
+          // Render
+          if(SPAN_SECONDS.textContent > 0){
+            SPAN_SECONDS.textContent = SPAN_SECONDS.textContent -1;
+          }
+          else{
+            let urlAux = location.href.split("/");
+            HASH.value = urlAux[urlAux.length-1];
+            BUTTON_SALTAR.disabled = false;
+          }
+        }
+
+        //===
+        // INIT
+        //===
+        updateCountdown();
+        // Refresh every second
+        setInterval(updateCountdown, MILLISECONDS_OF_A_SECOND);
+    });
+    </script>
+  </body>
+</html>

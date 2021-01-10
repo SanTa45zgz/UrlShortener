@@ -3,7 +3,7 @@ package urlshortener.service;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
-import urlshortener.web.UrlShortenerController;
+import urlshortener.web.RedirectController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import urlshortener.broker.BrokerClient;
 import urlshortener.domain.GeoLocation;
 import urlshortener.domain.ShortURL;
-import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 
 import javax.servlet.http.HttpServletRequest;
