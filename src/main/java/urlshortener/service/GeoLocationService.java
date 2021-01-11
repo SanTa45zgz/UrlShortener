@@ -45,12 +45,16 @@ public class GeoLocationService {
             return new GeoLocation(ip, cityName, latitude, longitude, country);
         } catch (AddressNotFoundException e){
             return GeoLocation.geoLocationFixture();
+        } finally {
+            counter++;
         }
     }
 
     public long getCounter() {
         long total = counter;
+        System.out.println("GeoLocation counter ===> " + counter);
         counter = 0;
+        System.out.println("GeoLocation total ===> " + total);
         return total;
     }
 }

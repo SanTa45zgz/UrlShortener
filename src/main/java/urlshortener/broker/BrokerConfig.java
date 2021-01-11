@@ -11,7 +11,6 @@ import urlshortener.repository.ClickRepository;
 import urlshortener.repository.ShortURLRepository;
 import urlshortener.repository.SystemInfoRepository;
 import urlshortener.service.GeoLocationService;
-import urlshortener.service.MetricsService;
 import urlshortener.service.ShortURLService;
 
 @Configuration
@@ -67,9 +66,8 @@ public class BrokerConfig {
 
     @Profile("worker")
     @Bean
-    public BrokerServer brokerServer(ShortURLRepository shortURLRepository, ClickRepository clickRepository,
-                                     SystemInfoRepository systemInfoRepository, GeoLocationService geoLocationService) {
-        return new BrokerServer(new MetricsService(shortURLRepository, clickRepository, systemInfoRepository), geoLocationService);
+    public BrokerServer brokerServer(GeoLocationService geoLocationService) {
+        return new BrokerServer(geoLocationService);
     }
 
 }

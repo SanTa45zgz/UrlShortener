@@ -1,3 +1,10 @@
+let ip = "";
+
+function saveIp(json) {
+    console.log("My public IP address is: ", json.ip);
+    ip = json.ip;
+}
+
 $(document).ready(
     function () {
         $("#shortener").submit(
@@ -6,6 +13,7 @@ $(document).ready(
                 $.ajax({
                     type: "POST",
                     url: "/link",
+                    headers: { 'x-custom-ip': ip },
                     data: $(this).serialize(),
                     success: function (msg) {
                         $("#result").html(

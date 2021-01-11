@@ -34,7 +34,7 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
         try {
             topUris = jdbc.query("select hash, count (*) as cuenta " +
                     "from shorturl right join click on shorturl.hash=click.hash " +
-                    "group by hash order by count(*) desc limit 10 ", rowMapper);
+                    "group by hash order by count(*) desc limit 10", rowMapper);
         } catch (Exception e) {
             log.debug("When select ", e);
         }
@@ -44,10 +44,11 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     @Override
     public Long updateCounter(String key, long value) {
         try {
-            jdbc.update("update counters set value=value+? where key=?", value, key);
-            return getCounter(key);
+            Long actual = getCounter(key);
+            jdbc.update("update counters set valor=? where clave=?", actual + value, key);
+            return actual + value;
         } catch (Exception e) {
-            log.debug("Fallo al actualizar contador de " + key);
+            log.warn("Fallo al actualizar contador de " + key);
         }
         return -1L;
     }
@@ -55,11 +56,9 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     @Override
     public Long getCounter(String key) {
         try {
-            return jdbc
-                    .queryForObject("select value from counters where key = ?", new Object[]{key},
-                            Long.class);
+            return jdbc.queryForObject("select valor from counters where clave=?", new Object[]{key}, Long.class);
         } catch (Exception e) {
-            log.debug("When counting " + key, e);
+            log.warn("When counting " + key, e);
         }
         return -1L;
     }

@@ -20,6 +20,9 @@ public class CacheService {
     // Total urls checked since last counter request
     private long urlsChecked = 0;
 
+    // Total safe urls
+    private long urlsSafe = 0;
+
     public CacheService() {
         this.tempUrlList = new ArrayList<>();
     }
@@ -52,13 +55,38 @@ public class CacheService {
     }
 
     /**
-     * Get actual counter of urls checked since last
+     * Get total counter of urls received since last check
+     * @return counter of urls received
+     */
+    public long getUrlsReceived() {
+        long received = totalCounter;
+        totalCounter = 0;
+        return received;
+    }
+
+    /**
+     * Get actual counter of urls checked since last check
      * @return counter of urls checked
      */
     public long getUrlsChecked() {
         long checked = urlsChecked;
         urlsChecked = 0;
         return checked;
+    }
+
+    public void addSafeUrls(long newSafeUrls) {
+        System.out.println("Guardando nuevas urls seguras ==============> " + newSafeUrls);
+        urlsSafe+=newSafeUrls;
+    }
+
+    /**
+     * Get actual counter of safe urls since last check
+     * @return counter of safe urls
+     */
+    public long getUrlsSafe() {
+        long safeUrls = urlsSafe;
+        urlsSafe = 0;
+        return safeUrls;
     }
 
 }

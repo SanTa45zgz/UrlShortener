@@ -37,7 +37,7 @@ public class PrometheusCounters {
         Gauge.builder("sysinfo.clicks", metricsService::getNumClicks)
                 .description("Total amount of clicks")
                 .register(registry);
-        log.info("NumClicks calculated");
+//        log.info("NumClicks calculated");
     }
 
     @Scheduled(fixedRate = 1000)
@@ -45,7 +45,7 @@ public class PrometheusCounters {
         Gauge.builder("sysinfo.uris", metricsService::getNumUris)
                 .description("Total amount of uris shortened")
                 .register(registry);
-        log.info("NumUris shortened calculated");
+//        log.info("NumUris shortened calculated");
     }
 
     @Scheduled(fixedRate = 1000)
@@ -53,7 +53,7 @@ public class PrometheusCounters {
         Gauge.builder("sysinfo.users", metricsService::getNumUsers)
                 .description("Total amount of users connected")
                 .register(registry);
-        log.info("NumUsers calculated");
+//        log.info("NumUsers calculated");
     }
 
     @Scheduled(fixedDelay = 1000)
@@ -65,7 +65,7 @@ public class PrometheusCounters {
                     "value", item.getSecond().toString())
                     .increment();
         }
-        log.info("TopUris calculated");
+//        log.info("TopUris calculated");
     }
 
     @Scheduled(fixedDelay = 1000)
@@ -77,7 +77,7 @@ public class PrometheusCounters {
                     "value", item.getSecond().toString())
                     .increment();
         }
-        log.info("GeoRedirects calculated");
+//        log.info("GeoRedirects calculated");
     }
 
     private List<Pair<String, Long>> getRankingUris(){
@@ -94,27 +94,33 @@ public class PrometheusCounters {
         Gauge.builder("sysinfo.totalGeoLocations", newGeoLocations, value -> value)
                 .description("Total amount of geoLocations calculated")
                 .register(registry);
-//        log.info("TotalGeoLocations calculated");
+        if (geoLocations > 0) {
+            log.info("TotalGeoLocations calculated (" + geoLocations + ")");
+        }
     }
 
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsChecked() {
         long urlsChecked = brokerClient.getTotalUrlsChecked();
-        long newUrlsChecked = metricsService.updateTotalGeoLocations(urlsChecked);
+        long newUrlsChecked = metricsService.updateTotalUrlChecked(urlsChecked);
         Gauge.builder("sysinfo.totalUrlsChecked", newUrlsChecked, value -> value)
                 .description("Total amount of urls checked")
                 .register(registry);
-//        log.info("TotalGeoLocations calculated");
+        if (urlsChecked > 0) {
+            log.info("TotalUrlsChecked calculated (" + urlsChecked + ")");
+        }
     }
 
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsSafe() {
         long urlsSafe = brokerClient.getTotalUrlsSafe();
-        long newUrlsSafe = metricsService.updateTotalGeoLocations(urlsSafe);
+        long newUrlsSafe = metricsService.updateTotalUrlSafe(urlsSafe);
         Gauge.builder("sysinfo.totalUrlsSafe", newUrlsSafe, value -> value)
                 .description("Total amount of urls safe")
                 .register(registry);
-//        log.info("TotalGeoLocations calculated");
+        if (urlsSafe > 0) {
+            log.info("TotalUrlsSafe calculated (" + urlsSafe + ")");
+        }
     }
 
 }

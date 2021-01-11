@@ -47,7 +47,7 @@ public class UrlShortenerController {
     }
 
     private String extractIP(HttpServletRequest request) {
-        return request.getRemoteAddr();
+        return request.getHeader("x-custom-ip");
     }
 
 }

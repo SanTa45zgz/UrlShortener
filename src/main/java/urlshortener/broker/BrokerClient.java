@@ -5,12 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import urlshortener.domain.GeoLocation;
-import urlshortener.domain.RedirectList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BrokerClient {
 
@@ -46,14 +41,13 @@ public class BrokerClient {
     /* -------------------------------- */
 
     public long getTotalGeoLocations() {
-//        log.info("Pidiendo click al server");
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalGeoLocate:dummy");
 
-        long counter = -1;
+        long counter = 0;
         try {
             counter = (long) response;
-            log.info("Num de geoLocations => " + counter);
+//            log.info("Num de geoLocations => " + counter);
         } catch (NullPointerException exception) {
             log.info("No se ha podido obtener el contador de geo localizaciones realizadas: " + exception);
         }
@@ -61,14 +55,13 @@ public class BrokerClient {
     }
 
     public long getTotalUrlsChecked() {
-//        log.info("Pidiendo numUris al server");
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalChecked:dummy");
 
-        long counter = -1;
+        long counter = 0;
         try {
             counter = (long) response;
-            log.info("Num de urls comprobadas => " + counter);
+//            log.info("Num de urls comprobadas => " + counter);
         } catch (NullPointerException exception) {
             log.info("No se ha podido obtener el contador de urls comprobadas: " + exception);
         }
@@ -76,14 +69,13 @@ public class BrokerClient {
     }
 
     public long getTotalUrlsSafe() {
-//        log.info("Pidiendo numUsers al server");
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalSafe:dummy");
 
-        long counter = -1;
+        long counter = 0;
         try {
             counter = (long) response;
-            log.info("Num de urls seguras => " + counter);
+//            log.info("Num de urls seguras => " + counter);
         } catch (NullPointerException exception) {
             log.info("No se ha podido obtener el contador de urls seguras: " + exception);
         }

@@ -53,6 +53,8 @@ public class UrlDealer {
                     matches.add(url);
                 }
             }
+            // Save new safe urls count
+            cacheService.addSafeUrls(urls.size() - matches.size());
             // Create response object
             CheckedMatches checkedMatches = new CheckedMatches(urls, matches);
             // Add the result back to cacheService

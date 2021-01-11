@@ -5,7 +5,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import urlshortener.service.CacheService;
 import urlshortener.service.GeoLocationService;
-import urlshortener.service.MetricsService;
 
 import java.io.IOException;
 
@@ -15,14 +14,9 @@ public class BrokerServer {
     private CacheService cacheService;
 
     @Autowired
-    private final MetricsService metricsService;
-
-    @Autowired
     private final GeoLocationService geoLocationService;
 
-    public BrokerServer(MetricsService metricsService, GeoLocationService geoLocationService) {
-
-        this.metricsService = metricsService;
+    public BrokerServer(GeoLocationService geoLocationService) {
         this.geoLocationService = geoLocationService;
     }
 
@@ -35,7 +29,7 @@ public class BrokerServer {
         switch (option) {
             case "location":
                 try {
-                    return geoLocationService.getLocation(params[1]).toString();
+                    return geoLocationService.getLocation(message.substring(9)).toString();
                 } catch (GeoIp2Exception | IOException e) {
                     e.printStackTrace();
                 }
@@ -46,9 +40,9 @@ public class BrokerServer {
             case "totalGeoLocate":
                 return geoLocationService.getCounter();
             case "totalChecked":
-                return 1L;
+                return cacheService.getUrlsChecked();
             case "totalSafe":
-                return 2L;
+                return cacheService.getUrlsSafe();
             default:
                 System.out.println("No se reconoce este comando ==> " + option);
                 return null;
@@ -61,6 +55,7 @@ public class BrokerServer {
      */
     private void validateUrl(String message) {
         String url = message.substring(9);
+        System.out.println("Se añade la siguiente url para validar => " + url);
         // Add to To-Process queue
         cacheService.addUrl(url);
     }
