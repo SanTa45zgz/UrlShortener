@@ -123,8 +123,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countTotalGeoLocations() {
         long geoLocations = brokerClient.getTotalGeoLocations();
-        long newGeoLocations = metricsService.updateTotalGeoLocations(geoLocations);
-        Gauge.builder("sysinfo.totalGeoLocations", newGeoLocations, value -> value)
+        metricsService.updateTotalGeoLocations(geoLocations);
+        Gauge.builder("sysinfo.totalGeoLocations", metricsService::getTotalGeoLocations)
                 .description("Total amount of geoLocations calculated")
                 .register(registry);
         if (geoLocations > 0) {
@@ -141,8 +141,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsChecked() {
         long urlsChecked = brokerClient.getTotalUrlsChecked();
-        long newUrlsChecked = metricsService.updateTotalUrlChecked(urlsChecked);
-        Gauge.builder("sysinfo.totalUrlsChecked", newUrlsChecked, value -> value)
+        metricsService.updateTotalUrlChecked(urlsChecked);
+        Gauge.builder("sysinfo.totalUrlsChecked", metricsService::getTotalUrlChecked)
                 .description("Total amount of urls checked")
                 .register(registry);
         if (urlsChecked > 0) {
@@ -158,8 +158,8 @@ public class PrometheusCounters {
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsSafe() {
         long urlsSafe = brokerClient.getTotalUrlsSafe();
-        long newUrlsSafe = metricsService.updateTotalUrlSafe(urlsSafe);
-        Gauge.builder("sysinfo.totalUrlsSafe", newUrlsSafe, value -> value)
+        metricsService.updateTotalUrlSafe(urlsSafe);
+        Gauge.builder("sysinfo.totalUrlsSafe", metricsService::getTotalUrlSafe)
                 .description("Total amount of urls safe")
                 .register(registry);
         if (urlsSafe > 0) {
