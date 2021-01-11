@@ -34,6 +34,12 @@ public class GeoLocationService {
         dbReader = new DatabaseReader.Builder(database).build();
     }
 
+    /**
+     *
+     * @param ip Ip address of the request
+     * @return GeoLocation from the ip address of the request after obtaining it from GeoIP2 local database
+     *
+     */
     public GeoLocation getLocation(String ip)
             throws IOException, GeoIp2Exception {
         try{
@@ -46,10 +52,15 @@ public class GeoLocationService {
         } catch (AddressNotFoundException e){
             return GeoLocation.geoLocationFixture();
         } finally {
+            // Increments the counter of total geoLocations
             counter++;
         }
     }
 
+    /**
+     *
+     * @return counter of geoLocations calculated since last check
+     */
     public long getCounter() {
         long total = counter;
         System.out.println("GeoLocation counter ===> " + counter);

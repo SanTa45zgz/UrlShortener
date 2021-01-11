@@ -18,6 +18,11 @@ public class BrokerClient {
     private static final Logger log = LoggerFactory
             .getLogger(BrokerClient.class);
 
+    /**
+     *
+     * @param ip Ip address of last request
+     * @return GeoLocation calculated in GeoLocationService from the Worker.
+     */
     public GeoLocation getLocationFromIp(String ip) {
 //        log.info("Pidiendo geolocation al server");
 
@@ -27,11 +32,15 @@ public class BrokerClient {
         try {
             geoLocation = GeoLocation.createGeoLocation((String) response);
         } catch (NullPointerException exception) {
-            log.info("No se ha podido obtener los clicks: " + exception);
+            log.info("No se ha podido obtener la geoLocation: " + exception);
         }
         return geoLocation;
     }
 
+    /**
+     * Sends the task 'validateUrl' to the queue.
+     * @param url Url which is going to be checked.
+     */
     public void validateUrl(String url) {
         template.convertAndSend(exchange.getName(),"rpc", "validate:" + url);
     }
@@ -40,6 +49,10 @@ public class BrokerClient {
     /* ---------- Statistics ---------- */
     /* -------------------------------- */
 
+    /**
+     * Sends the task 'totalGeoLocate' to the queue and receives the result.
+     * @return Total GeoLocations since last check.
+     */
     public long getTotalGeoLocations() {
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalGeoLocate:dummy");
@@ -54,6 +67,11 @@ public class BrokerClient {
         return counter;
     }
 
+
+    /**
+     * Sends the task 'totalChecked' to the queue and receives the result
+     * @return Total Urls that has been checked since last check
+     */
     public long getTotalUrlsChecked() {
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalChecked:dummy");
@@ -68,6 +86,11 @@ public class BrokerClient {
         return counter;
     }
 
+
+    /**
+     * Sends the task 'totalSafe' to the queue and receives the result
+     * @return Total urls that are safe since last check
+     */
     public long getTotalUrlsSafe() {
 
         Object response = template.convertSendAndReceive(exchange.getName(), "rpc", "totalSafe:dummy");

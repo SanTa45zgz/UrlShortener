@@ -32,6 +32,12 @@ public class PrometheusCounters {
         this.metricsService = metricsService;
     }
 
+
+    /**
+     * Retrieve from metricsService the total amount of clicks
+     * every second periodically
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedRate = 1000)
     public void countNumClick(){
         Gauge.builder("sysinfo.clicks", metricsService::getNumClicks)
@@ -40,6 +46,12 @@ public class PrometheusCounters {
 //        log.info("NumClicks calculated");
     }
 
+
+    /**
+     * Retrieve from metricsService the amount of uris that have been shortened
+     * every second periodically
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedRate = 1000)
     public void countNumUris(){
         Gauge.builder("sysinfo.uris", metricsService::getNumUris)
@@ -48,6 +60,11 @@ public class PrometheusCounters {
 //        log.info("NumUris shortened calculated");
     }
 
+    /**
+     * Retrieve from metricsService the amount of users connected to the UrlShortenerApp
+     * every second periodically
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedRate = 1000)
     public void countNumUsers(){
         Gauge.builder("sysinfo.users", metricsService::getNumUsers)
@@ -56,6 +73,11 @@ public class PrometheusCounters {
 //        log.info("NumUsers calculated");
     }
 
+    /**
+     * Retrieve from metricsService the top 10 most redirected uris
+     * every second periodically
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedDelay = 1000)
     public void http_redirects(){
         List<Pair<String, Long>> topUris = getRankingUris();
@@ -68,6 +90,11 @@ public class PrometheusCounters {
 //        log.info("TopUris calculated");
     }
 
+    /**
+     * Retrieve from metricsService the amount of redirects group by country
+     * every second periodically
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedDelay = 1000)
     public void geo_redirects(){
         List<Pair<String, Long>> country_redirects = getCountryCount();
@@ -87,6 +114,12 @@ public class PrometheusCounters {
         return metricsService.getGeoRedirects();
     }
 
+
+    /**
+     * Retrieve from BrokerClient(Worker) the amount of geoLocations calculated every second periodically
+     * and updates metricsService's totalGeoLocationsCounter.
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedRate = 1000)
     public void countTotalGeoLocations() {
         long geoLocations = brokerClient.getTotalGeoLocations();
@@ -99,6 +132,12 @@ public class PrometheusCounters {
         }
     }
 
+
+    /**
+     * Retrieve from BrokerClient(Worker) the amount of urls that have been checked their safeness
+     * every second periodically and updates metricsService's totalUrlCheckedCounter.
+     * Then updates the Prometheus gauge
+     */
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsChecked() {
         long urlsChecked = brokerClient.getTotalUrlsChecked();
@@ -111,6 +150,11 @@ public class PrometheusCounters {
         }
     }
 
+    /**
+     * Retrieve from brokerClient(worker) the amount of urls which are safe in the last second
+     * and updates metricsService's totalUrlsSafeCounter with this new value.
+     * Then updates the Prometheus gauge.
+     */
     @Scheduled(fixedRate = 1000)
     public void countTotalUrlsSafe() {
         long urlsSafe = brokerClient.getTotalUrlsSafe();
