@@ -1,16 +1,10 @@
 package urlshortener.repository.impl;
 
-import com.sun.tools.javac.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
-
-import urlshortener.domain.GeoLocation;
-
-import urlshortener.domain.SystemInfo;
 import urlshortener.repository.SystemInfoRepository;
 
 import java.util.ArrayList;
@@ -26,8 +20,8 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<Pair<String, Long>> rowMapper =
-            (rs, rowNum) -> new Pair<>(
-                    rs.getString("target"), rs.getLong("cuenta")
+            (rs, rowNum) -> Pair.of(
+                    rs.getString("hash"), rs.getLong("cuenta")
             );
 
     public SystemInfoRepositoryImpl(JdbcTemplate jdbc) {
@@ -35,23 +29,38 @@ public class SystemInfoRepositoryImpl implements SystemInfoRepository {
     }
 
     @Override
-    public SystemInfo getSystemInfo(GeoLocation location) {
-        long numUsers = 0;
-        long numClicks = 0;
-        long numUris = 0;
+    public List<Pair<String, Long>> getTopUris() {
         List<Pair<String, Long>> topUris = new ArrayList<>();
-        try{
-            numClicks = jdbc.queryForObject("select count(*) from click", Long.class);
-            numUris = jdbc.queryForObject("select count(*) from shorturl", Long.class);
-            numUsers = jdbc.queryForObject("select count(*) from " +
-                    "(select ip from click group by ip)", Long.class);
-            topUris = jdbc.query("select target, count (*) as cuenta " +
+        try {
+            topUris = jdbc.query("select hash, count (*) as cuenta " +
                     "from shorturl right join click on shorturl.hash=click.hash " +
-                    "group by target order by count(*) desc limit 10 ", rowMapper );
-            
-        }catch (Exception e){
+                    "group by hash order by count(*) desc limit 10", rowMapper);
+        } catch (Exception e) {
             log.debug("When select ", e);
         }
-        return new SystemInfo(numUsers, numClicks, numUris,topUris,location);
+        return topUris;
     }
+
+    @Override
+    public Long updateCounter(String key, long value) {
+        try {
+            Long actual = getCounter(key);
+            jdbc.update("update counters set valor=? where clave=?", actual + value, key);
+            return actual + value;
+        } catch (Exception e) {
+            log.warn("Fallo al actualizar contador de " + key);
+        }
+        return -1L;
+    }
+
+    @Override
+    public Long getCounter(String key) {
+        try {
+            return jdbc.queryForObject("select valor from counters where clave=?", new Object[]{key}, Long.class);
+        } catch (Exception e) {
+            log.warn("When counting " + key, e);
+        }
+        return -1L;
+    }
+
 }

@@ -1,12 +1,16 @@
 package urlshortener.repository;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
-import urlshortener.domain.GeoLocation;
-import urlshortener.domain.SystemInfo;
+
+import java.util.List;
 
 @Repository
 public interface SystemInfoRepository {
 
-    SystemInfo getSystemInfo(GeoLocation location);
+    List<Pair<String, Long>> getTopUris();
 
+    Long updateCounter(String key, long value);
+
+    Long getCounter(String key);
 }

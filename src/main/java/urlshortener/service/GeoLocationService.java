@@ -1,37 +1,68 @@
 package urlshortener.service;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.GeoLocation;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 
 // Service that obtains the geoLocation from the IP address using local database
 // GeoIP2 from MaxMind
 // https://www.baeldung.com/geolocation-by-ip-with-maxmind
+@Profile("worker")
 @Service
 public class GeoLocationService {
-    private DatabaseReader dbReader;
 
-    public GeoLocationService() throws IOException {
-        File database = new File("src/main/resources/GeoLite2-City.mmdb");
+    private static final Logger log = LoggerFactory
+            .getLogger(ClickService.class);
+
+    private final DatabaseReader dbReader;
+
+    private long counter = 0;
+
+    public GeoLocationService(ResourceLoader resourceLoader) throws IOException {
+        InputStream database = resourceLoader.getResource("classpath:GeoLite2-City.mmdb").getInputStream();
         dbReader = new DatabaseReader.Builder(database).build();
     }
 
+    /**
+     * @param ip Ip address of the request
+     * @return GeoLocation from the ip address of the request after obtaining it from GeoIP2 local database
+     */
     public GeoLocation getLocation(String ip)
             throws IOException, GeoIp2Exception {
-        CityResponse response = dbReader.city(InetAddress.getByName(ip));
-
-        String cityName = response.getCity().getName();
-        String latitude =
-                response.getLocation().getLatitude().toString();
-        String longitude =
-                response.getLocation().getLongitude().toString();
-        return new GeoLocation(ip, cityName, latitude, longitude);
+        try {
+            CityResponse response = dbReader.city(InetAddress.getByName(ip));
+            String cityName = response.getCity().getName();
+            String latitude = response.getLocation().getLatitude().toString();
+            String longitude = response.getLocation().getLongitude().toString();
+            String country = response.getCountry().getName();
+            return new GeoLocation(ip, cityName, latitude, longitude, country);
+        } catch (AddressNotFoundException e) {
+            return GeoLocation.geoLocationFixture();
+        } finally {
+            // Increments the counter of total geoLocations
+            counter++;
+        }
     }
 
+    /**
+     * @return counter of geoLocations calculated since last check
+     */
+    public long getCounter() {
+        long total = counter;
+        System.out.println("GeoLocation counter ===> " + counter);
+        counter = 0;
+        System.out.println("GeoLocation total ===> " + total);
+        return total;
+    }
 }
