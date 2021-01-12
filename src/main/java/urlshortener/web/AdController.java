@@ -6,10 +6,18 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
+/**
+ * Controlador para mostrar la vista HTML de la página publicitaria
+ */
 @Controller
 public class AdController {
 
+    /**
+     * Devuelve la vista de la página intersticial
+     * junto con la gestion de la cache en la cabecera de respuesta
+     * @param response
+     * @return Vista (HTML)
+     */
     @Cacheable(cacheNames="ad")
     @GetMapping("/ad/{.*}")
     public String redirectToAd(HttpServletResponse response) {
