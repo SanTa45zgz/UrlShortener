@@ -52,8 +52,8 @@ public class RedirectController {
      * y la dirección de destino es segura
      * @param id
      * @param request
-     * @return Redirección a página web destino (302),
-     *         Redirección a página publicitaria (307),
+     * @return Redirección a página web destino (307),
+     *         Redirección a página publicitaria (302),
      *         Error 404 si no existe y/o no es segura
      */
     @Operation(summary = "Redirect to ad page or destination URL depending on whether it is an ad shortened URL")
