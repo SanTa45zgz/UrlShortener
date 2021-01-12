@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static urlshortener.fixtures.ShortURLFixture.someUrl;
 
 import org.junit.Before;
@@ -15,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 
@@ -54,6 +56,40 @@ public class RedirectTests {
 
     mockMvc.perform(get("/{id}", "someKey")).andDo(print())
         .andExpect(status().isNotFound());
+  }
+
+  //NEW TEST
+
+  /**
+   * Check that a link with sponsor redirects correctly to the advertising URL
+   * @throws Exception
+   */
+  @Test
+  public void thatRedirectToReturnsTemporaryRedirectToAdIfKeyExists()
+      throws Exception {
+    ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
+        null, 307, true, null, null);
+    when(shortUrlService.findByKey("unizar")).thenReturn(l);
+
+    mockMvc.perform(get("/{id}", "unizar")).andDo(print())
+        .andExpect(status().isFound())
+        .andExpect(redirectedUrl("ad/unizar"));
+  }
+
+  /**
+   * Check that it returns the destination URL of a shortened link
+   * @throws Exception
+   */
+  @Test
+  public void getDestinationUrl()
+      throws Exception {
+    ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
+        null, 307, true, null, null);
+    when(shortUrlService.findByKey("unizar")).thenReturn(l);
+
+    mockMvc.perform(get("/redirect").param("hash", "unizar")).andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(content().string("http://unizar.es/"));
   }
 
 }

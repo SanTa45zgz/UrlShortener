@@ -94,7 +94,7 @@ public class RedirectController {
         content = {@Content(mediaType = "string",
             schema = @Schema(implementation = String.class)) })
     })
-    @GetMapping(value = "/redirect/{hash}")
+    @GetMapping(value = "/redirect")
     public ResponseEntity<String> toLink(@Parameter(description = "Shortened url id/hash") @RequestParam("hash") String id,
                                             HttpServletRequest request) {
         log.debug("Redireccionamos tras publi");
