@@ -1,4 +1,3 @@
-
 package urlshortener.service;
 
 import org.springframework.context.annotation.Profile;
@@ -28,7 +27,7 @@ public class CacheService {
     }
 
     /**
-        Adds a request to the waiting list
+     * Adds a request to the waiting list
      */
     public void addUrl(String url) {
         totalCounter++;
@@ -38,6 +37,7 @@ public class CacheService {
 
     /**
      * Returns up to 500 requests saved in the waiting list
+     *
      * @return List up to 500 urls to send to Google Safe Api
      */
     public List<String> getTempUrlList() {
@@ -56,6 +56,7 @@ public class CacheService {
 
     /**
      * Get total counter of urls received since last check
+     *
      * @return counter of urls received
      */
     public long getUrlsReceived() {
@@ -66,6 +67,7 @@ public class CacheService {
 
     /**
      * Get actual counter of urls checked since last check
+     *
      * @return counter of urls checked
      */
     public long getUrlsChecked() {
@@ -76,11 +78,12 @@ public class CacheService {
 
     public void addSafeUrls(long newSafeUrls) {
         System.out.println("Guardando nuevas urls seguras ==============> " + newSafeUrls);
-        urlsSafe+=newSafeUrls;
+        urlsSafe += newSafeUrls;
     }
 
     /**
      * Get actual counter of safe urls since last check
+     *
      * @return counter of safe urls
      */
     public long getUrlsSafe() {

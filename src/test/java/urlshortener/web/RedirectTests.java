@@ -1,13 +1,5 @@
 package urlshortener.web;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static urlshortener.fixtures.ShortURLFixture.someUrl;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -15,81 +7,96 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import urlshortener.broker.BrokerClient;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static urlshortener.fixtures.GeoLocationFixture.someGeoLocation;
+import static urlshortener.fixtures.ShortURLFixture.someUrl;
+
 public class RedirectTests {
 
-  private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-  @Mock
-  private ClickService clickService;
+    @Mock
+    private ShortURLService shortUrlService;
 
-  @Mock
-  private ShortURLService shortUrlService;
+    @Mock
+    private ClickService clickService;
 
-  @InjectMocks
-  private RedirectController redirect;
+    @Mock
+    private BrokerClient brokerClient;
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(redirect).build();
-  }
+    @InjectMocks
+    private RedirectController redirect;
 
-  @Test
-  public void thatRedirectToReturnsTemporaryRedirectIfKeyExists()
-      throws Exception {
-    when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(redirect).build();
+    }
 
-    mockMvc.perform(get("/{id}", "someKey")).andDo(print())
-        .andExpect(status().isTemporaryRedirect())
-        .andExpect(redirectedUrl("http://example.com/"));
-  }
+    @Test
+    public void thatRedirectToReturnsTemporaryRedirectIfKeyExists()
+            throws Exception {
+        when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
+        when(brokerClient.getLocationFromIp("127.0.0.1")).thenReturn(someGeoLocation());
 
-  @Test
-  public void thatRedirecToReturnsNotFoundIdIfKeyDoesNotExist()
-      throws Exception {
-    when(shortUrlService.findByKey("someKey")).thenReturn(null);
+        mockMvc.perform(get("/{id}", "someKey")).andDo(print())
+                .andExpect(status().isTemporaryRedirect())
+                .andExpect(redirectedUrl("http://example.com/"));
+    }
 
-    mockMvc.perform(get("/{id}", "someKey")).andDo(print())
-        .andExpect(status().isNotFound());
-  }
+    @Test
+    public void thatRedirectToReturnsNotFoundIdIfKeyDoesNotExist()
+            throws Exception {
+        when(shortUrlService.findByKey("someKey")).thenReturn(null);
 
-  //NEW TEST
+        mockMvc.perform(get("/{id}", "someKey")).andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
-  /**
-   * Check that a link with sponsor redirects correctly to the advertising URL
-   * @throws Exception
-   */
-  @Test
-  public void thatRedirectToReturnsTemporaryRedirectToAdIfKeyExists()
-      throws Exception {
-    ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
-        null, 307, true, null, null);
-    when(shortUrlService.findByKey("unizar")).thenReturn(l);
+    //NEW TEST
 
-    mockMvc.perform(get("/{id}", "unizar")).andDo(print())
-        .andExpect(status().isFound())
-        .andExpect(redirectedUrl("ad/unizar"));
-  }
+    /**
+     * Check that a link with sponsor redirects correctly to the advertising URL
+     *
+     * @throws Exception
+     */
+    @Test
+    public void thatRedirectToReturnsTemporaryRedirectToAdIfKeyExists()
+            throws Exception {
+        ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
+                null, 307, true, null, null);
+        when(shortUrlService.findByKey("unizar")).thenReturn(l);
+        when(brokerClient.getLocationFromIp("127.0.0.1")).thenReturn(someGeoLocation());
 
-  /**
-   * Check that it returns the destination URL of a shortened link
-   * @throws Exception
-   */
-  @Test
-  public void getDestinationUrl()
-      throws Exception {
-    ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
-        null, 307, true, null, null);
-    when(shortUrlService.findByKey("unizar")).thenReturn(l);
+        mockMvc.perform(get("/{id}", "unizar"))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("ad/unizar"));
+    }
 
-    mockMvc.perform(get("/redirect").param("hash", "unizar")).andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().string("http://unizar.es/"));
-  }
+    /**
+     * Check that it returns the destination URL of a shortened link
+     *
+     * @throws Exception
+     */
+    @Test
+    public void getDestinationUrl()
+            throws Exception {
+        ShortURL l = new ShortURL("unizar", "http://unizar.es/", null, "yes", null,
+                null, 307, true, null, null);
+        when(shortUrlService.findByKey("unizar")).thenReturn(l);
+
+        mockMvc.perform(get("/redirect").param("hash", "unizar")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("http://unizar.es/"));
+    }
 
 }

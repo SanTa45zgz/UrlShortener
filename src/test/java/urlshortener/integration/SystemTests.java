@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +27,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles(profiles = "webapp")
 @DirtiesContext
 public class SystemTests {
 
@@ -73,6 +75,8 @@ public class SystemTests {
     public void testRedirection() throws Exception {
         postLink("http://example.com/");
 
+        Thread.sleep(1500); // Sleep the thread to let Google Safe Browsing answer the safeness request
+
         ResponseEntity<String> entity = restTemplate.getForEntity("/f684a3c4", String.class);
         assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
         assertThat(entity.getHeaders().getLocation(), is(new URI("http://example.com/")));
@@ -83,6 +87,5 @@ public class SystemTests {
         parts.add("url", url);
         return restTemplate.postForEntity("/link", parts, String.class);
     }
-
 
 }

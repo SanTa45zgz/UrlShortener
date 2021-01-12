@@ -7,7 +7,7 @@ $(document).ready(
                     type: "GET",
                     url: "/redirect", // una petición parametrizada que devuelve la URI buena
                     data: $(this).serialize(),
-                    success: function(data) {
+                    success: function (data) {
                         window.open(data, "_self")
                     }
                 });

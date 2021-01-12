@@ -13,7 +13,7 @@ $(document).ready(
                 $.ajax({
                     type: "POST",
                     url: "/link",
-                    headers: { 'x-custom-ip': ip },
+                    headers: {'x-custom-ip': ip},
                     data: $(this).serialize(),
                     success: function (msg) {
                         $("#result").html(

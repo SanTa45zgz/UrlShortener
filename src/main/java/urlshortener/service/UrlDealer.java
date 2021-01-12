@@ -1,20 +1,18 @@
-package urlshortener.tasks;
+package urlshortener.service;
 
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import urlshortener.domain.CheckedMatches;
 import urlshortener.domain.Match;
-import urlshortener.service.CacheService;
-import urlshortener.service.MaliciousService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Profile("worker")
-@Component
+@Service
 public class UrlDealer {
 
     private final RabbitTemplate template;

@@ -2,7 +2,6 @@ package urlshortener.service;
 
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import urlshortener.domain.RedirectList;
 import urlshortener.repository.ClickRepository;
 import urlshortener.repository.ShortURLRepository;
 import urlshortener.repository.SystemInfoRepository;
@@ -26,31 +25,27 @@ public class MetricsService {
     /* ------------ Fetch functions ------------- */
 
     /**
-     *
-     * @return  Total amount of clicks retrieved from clickRepository
+     * @return Total amount of clicks retrieved from clickRepository
      */
     public long getNumClicks() {
         return clickRepository.count();
     }
 
     /**
-     *
-     * @return  Total amount of uris that have been shortened retrieved from shortURLRepository
+     * @return Total amount of uris that have been shortened retrieved from shortURLRepository
      */
     public long getNumUris() {
         return shortURLRepository.count();
     }
 
     /**
-     *
-     * @return  Total amount of users connected retrieved from clickRepository
+     * @return Total amount of users connected retrieved from clickRepository
      */
     public long getNumUsers() {
         return clickRepository.countByIp();
     }
 
     /**
-     *
      * @return Top 10 most redirected uris retrieved from systemInfoRepository
      */
     public List<Pair<String, Long>> getHttpRedirects() {
@@ -59,7 +54,6 @@ public class MetricsService {
 
 
     /**
-     *
      * @return Total amount of redirects group by country retrieved from ClickRepository
      */
     public List<Pair<String, Long>> getGeoRedirects() {
@@ -68,7 +62,6 @@ public class MetricsService {
 
 
     /**
-     *
      * @return Total amount of geoLocations retrieved from systemInfoRepository
      */
     public long getTotalGeoLocations() {
@@ -76,7 +69,6 @@ public class MetricsService {
     }
 
     /**
-     *
      * @return Total amount of urls checked from GoogleSafeBrowsing
      * retrieved from systemInfoRepository
      */
@@ -85,7 +77,6 @@ public class MetricsService {
     }
 
     /**
-     *
      * @return Total amount of urls checked from GoogleSafeBrowsing which are safe
      * retrieved from systemInfoRepository
      */
@@ -97,7 +88,6 @@ public class MetricsService {
     /* ------------ Increment functions ------------ */
 
     /**
-     *
      * @param geoLocations Amount of geoLocations calculated since last check.
      * @return Result of adding new geoLocations value to the previous amount of geoLocations saved.
      */
@@ -106,7 +96,6 @@ public class MetricsService {
     }
 
     /**
-     *
      * @param urlsChecked Amount of urls that have been checked from BrokerClient since last check
      * @return Result of adding new urlsChecked value to the previous amount of urlsChecked saved.
      */
@@ -115,7 +104,6 @@ public class MetricsService {
     }
 
     /**
-     *
      * @param urlsSafe Amount of urls that are safe from BrokerClient since last check.
      * @return Result of adding new urlsSafe value to the previous amount of urlsSafe saved.
      */

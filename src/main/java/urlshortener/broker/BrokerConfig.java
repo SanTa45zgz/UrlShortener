@@ -7,9 +7,6 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import urlshortener.repository.ClickRepository;
-import urlshortener.repository.ShortURLRepository;
-import urlshortener.repository.SystemInfoRepository;
 import urlshortener.service.GeoLocationService;
 import urlshortener.service.ShortURLService;
 
@@ -46,7 +43,7 @@ public class BrokerConfig {
 
     @Bean
     public Binding responseBinding(DirectExchange exchangeResponses,
-                           Queue responseQueue) {
+                                   Queue responseQueue) {
         return BindingBuilder.bind(responseQueue)
                 .to(exchangeResponses)
                 .with("rpc-responses");

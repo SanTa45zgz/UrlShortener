@@ -19,7 +19,6 @@ public class BrokerClient {
             .getLogger(BrokerClient.class);
 
     /**
-     *
      * @param ip Ip address of last request
      * @return GeoLocation calculated in GeoLocationService from the Worker.
      */
@@ -39,10 +38,11 @@ public class BrokerClient {
 
     /**
      * Sends the task 'validateUrl' to the queue.
+     *
      * @param url Url which is going to be checked.
      */
     public void validateUrl(String url) {
-        template.convertAndSend(exchange.getName(),"rpc", "validate:" + url);
+        template.convertAndSend(exchange.getName(), "rpc", "validate:" + url);
     }
 
     /* -------------------------------- */
@@ -51,6 +51,7 @@ public class BrokerClient {
 
     /**
      * Sends the task 'totalGeoLocate' to the queue and receives the result.
+     *
      * @return Total GeoLocations since last check.
      */
     public long getTotalGeoLocations() {
@@ -70,6 +71,7 @@ public class BrokerClient {
 
     /**
      * Sends the task 'totalChecked' to the queue and receives the result
+     *
      * @return Total Urls that has been checked since last check
      */
     public long getTotalUrlsChecked() {
@@ -89,6 +91,7 @@ public class BrokerClient {
 
     /**
      * Sends the task 'totalSafe' to the queue and receives the result
+     *
      * @return Total urls that are safe since last check
      */
     public long getTotalUrlsSafe() {

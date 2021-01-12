@@ -39,7 +39,7 @@ public class PrometheusCounters {
      * Then updates the Prometheus gauge
      */
     @Scheduled(fixedRate = 1000)
-    public void countNumClick(){
+    public void countNumClick() {
         Gauge.builder("sysinfo.clicks", metricsService::getNumClicks)
                 .description("Total amount of clicks")
                 .register(registry);
@@ -53,7 +53,7 @@ public class PrometheusCounters {
      * Then updates the Prometheus gauge
      */
     @Scheduled(fixedRate = 1000)
-    public void countNumUris(){
+    public void countNumUris() {
         Gauge.builder("sysinfo.uris", metricsService::getNumUris)
                 .description("Total amount of uris shortened")
                 .register(registry);
@@ -66,7 +66,7 @@ public class PrometheusCounters {
      * Then updates the Prometheus gauge
      */
     @Scheduled(fixedRate = 1000)
-    public void countNumUsers(){
+    public void countNumUsers() {
         Gauge.builder("sysinfo.users", metricsService::getNumUsers)
                 .description("Total amount of users connected")
                 .register(registry);
@@ -79,7 +79,7 @@ public class PrometheusCounters {
      * Then updates the Prometheus gauge
      */
     @Scheduled(fixedDelay = 1000)
-    public void http_redirects(){
+    public void http_redirects() {
         List<Pair<String, Long>> topUris = getRankingUris();
         for (Pair<String, Long> item : topUris) {
             registry.counter("http.redirects",
@@ -96,7 +96,7 @@ public class PrometheusCounters {
      * Then updates the Prometheus gauge
      */
     @Scheduled(fixedDelay = 1000)
-    public void geo_redirects(){
+    public void geo_redirects() {
         List<Pair<String, Long>> country_redirects = getCountryCount();
         for (Pair<String, Long> item : country_redirects) {
             registry.counter("geo.redirects",
@@ -107,10 +107,11 @@ public class PrometheusCounters {
 //        log.info("GeoRedirects calculated");
     }
 
-    private List<Pair<String, Long>> getRankingUris(){
+    private List<Pair<String, Long>> getRankingUris() {
         return metricsService.getHttpRedirects();
     }
-    private List<Pair<String, Long>> getCountryCount(){
+
+    private List<Pair<String, Long>> getCountryCount() {
         return metricsService.getGeoRedirects();
     }
 

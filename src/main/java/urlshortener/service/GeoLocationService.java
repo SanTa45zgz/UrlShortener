@@ -35,21 +35,19 @@ public class GeoLocationService {
     }
 
     /**
-     *
      * @param ip Ip address of the request
      * @return GeoLocation from the ip address of the request after obtaining it from GeoIP2 local database
-     *
      */
     public GeoLocation getLocation(String ip)
             throws IOException, GeoIp2Exception {
-        try{
+        try {
             CityResponse response = dbReader.city(InetAddress.getByName(ip));
             String cityName = response.getCity().getName();
             String latitude = response.getLocation().getLatitude().toString();
             String longitude = response.getLocation().getLongitude().toString();
             String country = response.getCountry().getName();
             return new GeoLocation(ip, cityName, latitude, longitude, country);
-        } catch (AddressNotFoundException e){
+        } catch (AddressNotFoundException e) {
             return GeoLocation.geoLocationFixture();
         } finally {
             // Increments the counter of total geoLocations
@@ -58,7 +56,6 @@ public class GeoLocationService {
     }
 
     /**
-     *
      * @return counter of geoLocations calculated since last check
      */
     public long getCounter() {
