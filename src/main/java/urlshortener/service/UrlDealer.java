@@ -30,8 +30,9 @@ public class UrlDealer {
         this.maliciousService = maliciousService;
     }
 
-    /*
-        This functions is going to check pending requests every second
+    /**
+     *  This functions is going to check pending requests every second
+     *  for the URLs safeness in Google Safe Browsing API
      */
     @Scheduled(fixedRate = 1000)
     public void checkPendingUrlForSafeBrowsing() {
@@ -59,5 +60,4 @@ public class UrlDealer {
             template.convertAndSend(exchangeResponses.getName(), "rpc-responses", checkedMatches.toString());
         }
     }
-
 }

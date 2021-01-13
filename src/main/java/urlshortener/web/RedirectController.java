@@ -53,8 +53,7 @@ public class RedirectController {
      * acortado con o sin publicidad y dependiendo de si el enlace existe
      * y la dirección de destino es segura
      *
-     * @param id
-     * @param request
+     * @param id Shortened url id/hash
      * @return Redirección a página web destino (307),
      * Redirección a página publicitaria (302),
      * Error 404 si no existe y/o no es segura
@@ -92,8 +91,7 @@ public class RedirectController {
     /**
      * Método para obtener la URL destino a través del hash de un enlace acortado
      *
-     * @param id
-     * @param request
+     * @param id Shortened url id/hash
      * @return URL destino
      */
     @Operation(summary = "Get the destination URL")
@@ -138,13 +136,13 @@ public class RedirectController {
     /**
      * Realiza la redirección a la página web destino
      *
-     * @param l
+     * @param shortURL url acortada
      * @return redirección a URL de página destino
      */
-    private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
+    private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL shortURL) {
         HttpHeaders h = new HttpHeaders();
-        h.setLocation(URI.create(l.getTarget()));
-        return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+        h.setLocation(URI.create(shortURL.getTarget()));
+        return new ResponseEntity<>(h, HttpStatus.valueOf(shortURL.getMode()));
     }
 
 }

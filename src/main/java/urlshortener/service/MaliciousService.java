@@ -25,6 +25,11 @@ public class MaliciousService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
+    /**
+     * Checks if the URL is safe
+     * @param url URL to check
+     * @return a list of matches that represent the unsafeness of the URL evaluated
+     */
     public List<Match> checkUrl(String url) {
         // Transform alone url into list
         List<String> urls = new ArrayList<>();
@@ -33,11 +38,21 @@ public class MaliciousService {
         return sendRequest(urls);
     }
 
+    /**
+     * Checks if the URL in the list are safe
+     * @param urls list of URLs to check
+     * @return a list of matches for URLs passed
+     */
     public List<Match> checkUrl(List<String> urls) {
         // Return request function result
         return sendRequest(urls);
     }
 
+    /**
+     * Perform a request to the Google Safe Browsing API to check the safeness of the URLs received
+     * @param urls list of URLs to check
+     * @return a list od matches for the URLs passed
+     */
     private List<Match> sendRequest(List<String> urls) {
         // Create headers
         HttpHeaders headers = new HttpHeaders();

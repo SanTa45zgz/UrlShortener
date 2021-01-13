@@ -13,11 +13,13 @@ import urlshortener.service.ShortURLService;
 @Configuration
 public class BrokerConfig {
 
+    // Queue for requests to workers
     @Bean
     public Queue queue() {
         return new Queue("url.shortener.rpc.requests");
     }
 
+    // Queue for async responses from workers
     @Bean
     public Queue responseQueue() {
         return new Queue("url.shortener.rpc.responses.responses");
